@@ -57,6 +57,7 @@ const ROLE_PERMISSIONS = {
   // Financial Analyst: Reviews operational expenses, fuel consumption, maintenance costs, and profitability
   [ROLES.FINANCIAL_ANALYST]: [
     PERMISSIONS.VIEW_VEHICLES,
+    PERMISSIONS.VIEW_MAINTENANCE,
     PERMISSIONS.MANAGE_FUEL_EXPENSES,
     PERMISSIONS.VIEW_REPORTS,
   ],

@@ -158,7 +158,7 @@ export default function Maintenance() {
               <span className="material-symbols-outlined text-primary">history_edu</span>
             </div>
 
-            {!can(PERMISSIONS.ADD_MAINTENANCE) && (
+            {!can(PERMISSIONS.MANAGE_MAINTENANCE) && (
               <div className="mb-4 p-3 bg-surface-container border border-outline-variant rounded-lg flex items-center gap-2 text-secondary">
                 <span className="material-symbols-outlined text-[18px]">lock</span>
                 <span className="text-body-md">View only — you don't have permission to log service records.</span>
@@ -258,7 +258,7 @@ export default function Maintenance() {
               </div>
               </div>
 
-              <ProtectedAction permission={PERMISSIONS.ADD_MAINTENANCE} mode="tooltip">
+              <ProtectedAction permission={PERMISSIONS.MANAGE_MAINTENANCE} mode="tooltip">
                 <button
                   className="w-full bg-primary text-on-primary py-3 rounded-lg font-bold hover:brightness-90 transition-all shadow-md active:scale-95"
                   type="submit"
@@ -390,7 +390,7 @@ export default function Maintenance() {
                       </td>
                       <td className="px-6 py-4">
                         {log.status === "Active" ? (
-                          <ProtectedAction permission={PERMISSIONS.COMPLETE_MAINTENANCE} mode="tooltip">
+                          <ProtectedAction permission={PERMISSIONS.MANAGE_MAINTENANCE} mode="tooltip">
                             <button
                               onClick={() => completeMaintenanceLog(log.id)}
                               className="flex items-center gap-1.5 text-primary font-bold text-body-md hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors"
