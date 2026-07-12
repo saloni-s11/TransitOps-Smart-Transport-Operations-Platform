@@ -13,6 +13,7 @@ import Maintenance from "./pages/Maintenance";
 import FuelExpenses from "./pages/FuelExpenses";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
+import Support from "./pages/Support";
 
 /**
  * Wraps a route element so it redirects to the role's default page
@@ -50,6 +51,7 @@ export default function App() {
             <Route path="/fuel-expenses" element={<RequirePermission><FuelExpenses /></RequirePermission>} />
             <Route path="/reports"       element={<RequirePermission><Reports /></RequirePermission>} />
             <Route path="/settings"      element={<RequirePermission><Settings /></RequirePermission>} />
+            <Route path="/support"       element={<Support />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
