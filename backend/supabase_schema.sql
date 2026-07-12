@@ -78,6 +78,7 @@ CREATE TABLE fuel_logs (
     liters NUMERIC NOT NULL,
     cost NUMERIC NOT NULL,
     date DATE NOT NULL,
+    status VARCHAR(20) CHECK (status IN ('Pending Review', 'Processed', 'Rejected')) DEFAULT 'Pending Review',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
