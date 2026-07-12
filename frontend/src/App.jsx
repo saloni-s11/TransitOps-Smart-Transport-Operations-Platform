@@ -4,6 +4,7 @@ import { useAppData } from "./context/AppDataContext";
 import { canAccessRoute, getDefaultRoute } from "./lib/permissions";
 import AppLayout from "./layouts/AppLayout";
 import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import Vehicles from "./pages/Vehicles";
 import AddVehicle from "./pages/AddVehicle";
@@ -41,6 +42,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
 
           <Route element={<AppLayout />}>
             <Route path="/dashboard"     element={<RequirePermission><Dashboard /></RequirePermission>} />

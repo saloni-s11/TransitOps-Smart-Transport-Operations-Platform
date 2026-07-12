@@ -4,31 +4,56 @@ import { useAppData } from "../context/AppDataContext";
 
 const ROLES = ["Fleet Manager", "Dispatcher", "Safety Officer", "Financial Analyst"];
 
-export default function Login() {
+export default function SignUp() {
   const navigate = useNavigate();
-  const { signIn } = useAppData();
-  const [email, setEmail] = useState("manager@transitops.io");
-  const [password, setPassword] = useState("demo1234");
+  const { signUp } = useAppData();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("Fleet Manager");
-  const [remember, setRemember] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError("Please enter both email and password.");
+    setError("");
+    setSuccess("");
+
+    // Validation
+    if (!name || !email || !password || !confirmPassword) {
+      setError("All fields are required.");
       return;
     }
-    setError("");
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
-    const result = await signIn(role, email, password);
+    const result = await signUp(name, email, password, role);
     setLoading(false);
-    
+
     if (result.ok) {
-      navigate("/dashboard");
+      setSuccess(result.message || "Account created successfully!");
+      setName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      
+      // Redirect to login after 2 seconds
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     } else {
-      setError(result.error || "Login failed. Please check your credentials.");
+      setError(result.error || "Sign up failed. Please try again.");
     }
   };
 
@@ -52,7 +77,7 @@ export default function Login() {
             </p>
             <div className="space-y-6">
               <h2 className="font-label-caps text-label-caps text-primary-container uppercase tracking-widest">
-                One login, four roles:
+                Join as one of four roles:
               </h2>
               <ul className="space-y-4">
                 {ROLES.map((r) => (
@@ -69,14 +94,27 @@ export default function Login() {
           </div>
         </section>
 
-        {/* Right Panel: Sign-in Form */}
+        {/* Right Panel: Sign-up Form */}
         <section className="w-full md:w-7/12 p-8 md:p-16 flex flex-col justify-center bg-white">
           <div className="max-w-md mx-auto w-full">
-            <div className="mb-10">
-              <h2 className="font-display text-display text-on-surface mb-2">Sign in to your account</h2>
-              <p className="font-body-md text-body-md text-secondary">Enter your credentials to continue</p>
+            <div className="mb-8">
+              <h2 className="font-display text-display text-on-surface mb-2">Create your account</h2>
+              <p className="font-body-md text-body-md text-secondary">Join TransitOps and start managing operations</p>
             </div>
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <label className="font-body-md text-body-md text-on-surface font-semibold" htmlFor="name">
+                  FULL NAME
+                </label>
+                <input
+                  className="w-full px-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-all text-body-md outline-none"
+                  id="name"
+                  placeholder="John Doe"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
               <div className="space-y-2">
                 <label className="font-body-md text-body-md text-on-surface font-semibold" htmlFor="email">
                   EMAIL
@@ -84,7 +122,7 @@ export default function Login() {
                 <input
                   className="w-full px-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-all text-body-md outline-none"
                   id="email"
-                  placeholder="manager@transitops.io"
+                  placeholder="john@transitops.io"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -104,8 +142,21 @@ export default function Login() {
                 />
               </div>
               <div className="space-y-2">
+                <label className="font-body-md text-body-md text-on-surface font-semibold" htmlFor="confirmPassword">
+                  CONFIRM PASSWORD
+                </label>
+                <input
+                  className="w-full px-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-all text-body-md outline-none"
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
                 <label className="font-body-md text-body-md text-on-surface font-semibold uppercase" htmlFor="role">
-                  Role Selection
+                  Select Your Role
                 </label>
                 <div className="relative">
                   <select
@@ -129,69 +180,36 @@ export default function Login() {
                   <span className="font-body-md text-[12px] font-bold">{error}</span>
                 </div>
               )}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input
-                    checked={remember}
-                    onChange={(e) => setRemember(e.target.checked)}
-                    className="rounded border-outline-variant text-primary focus:ring-primary-container cursor-pointer"
-                    type="checkbox"
-                  />
-                  <span className="font-body-md text-body-md text-secondary group-hover:text-on-surface transition-colors">
-                    Remember me
-                  </span>
-                </label>
-                <a
-                  className="font-body-md text-body-md text-primary font-semibold hover:underline decoration-primary-container"
-                  href="#forgot"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  Forgot password?
-                </a>
-              </div>
+              {success && (
+                <div className="bg-green-50 text-green-700 px-3 py-2 rounded border border-green-200 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                  <span className="font-body-md text-[12px] font-bold">{success}</span>
+                </div>
+              )}
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full bg-primary-container text-on-primary-fixed font-bold py-4 rounded-lg hover:brightness-95 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-60"
               >
                 {loading ? (
-                  <><span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span> Signing in...</>
-                ) : "Sign In"}
+                  <><span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span> Creating Account...</>
+                ) : "Create Account"}
               </button>
               
-              {/* Sign Up Link */}
+              {/* Sign In Link */}
               <div className="text-center pt-4">
                 <p className="font-body-md text-body-md text-secondary">
-                  Don't have an account?{" "}
+                  Already have an account?{" "}
                   <button
                     type="button"
-                    onClick={() => navigate("/signup")}
+                    onClick={() => navigate("/login")}
                     className="text-primary font-semibold hover:underline decoration-primary-container"
                   >
-                    Sign Up
+                    Sign In
                   </button>
                 </p>
               </div>
             </form>
-            <div className="mt-12 p-6 bg-surface-container-low rounded-xl border border-outline-variant/30">
-              <p className="font-label-caps text-label-caps text-secondary mb-4 opacity-70">
-                Access is scoped by role after login:
-              </p>
-              <ul className="space-y-2 font-body-md text-[13px] text-secondary leading-relaxed">
-                <li>
-                  • <strong className="text-on-surface">Fleet Manager</strong> – Fleet assets, Maintenance, Operational efficiency
-                </li>
-                <li>
-                  • <strong className="text-on-surface">Dispatcher</strong> – Creates trips, Assigns vehicles/drivers
-                </li>
-                <li>
-                  • <strong className="text-on-surface">Safety Officer</strong> – Driver compliance, License tracking
-                </li>
-                <li>
-                  • <strong className="text-on-surface">Financial Analyst</strong> – Expenses, Fuel, ROI analysis
-                </li>
-              </ul>
-            </div>
           </div>
         </section>
       </main>

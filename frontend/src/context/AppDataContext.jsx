@@ -104,25 +104,139 @@ export function AppDataProvider({ children }) {
 
   // ─── Auth ─────────────────────────────────────────────────────────────────────
 
-  const signIn = async (selectedRole, email, password) => {
-    // Try Supabase auth; fall back to demo mode if not configured
-    if (supabase && email && password) {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (!error && data?.user) {
-        setUser({ id: data.user.id, name: data.user.email, email: data.user.email, role: selectedRole, region: "Region K" });
-        if (selectedRole) setRole(selectedRole);
-        return { ok: true };
+  const signUp = async (name, email, password, selectedRole) => {
+    try {
+      // Create auth user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (authError) {
+        return { ok: false, error: authError.message };
       }
+
+      if (!authData?.user) {
+        return { ok: false, error: "Failed to create user account" };
+      }
+
+      // Get role_id from roles table
+      const { data: roleData, error: roleError } = await supabase
+        .from("roles")
+        .select("id")
+        .eq("name", selectedRole)
+        .single();
+
+      if (roleError || !roleData) {
+        return { ok: false, error: "Invalid role selected" };
+      }
+
+      // Create user profile
+      const { error: profileError } = await supabase
+        .from("user_profiles")
+        .insert([{
+          id: authData.user.id,
+          name,
+          email,
+          role_id: roleData.id,
+        }]);
+
+      if (profileError) {
+        return { ok: false, error: profileError.message };
+      }
+
+      // Set user in state
+      setUser({ 
+        id: authData.user.id, 
+        name, 
+        email, 
+        role: selectedRole, 
+        region: "Region K" 
+      });
+      setRole(selectedRole);
+
+      return { ok: true, message: "Account created successfully! You can now log in." };
+    } catch (err) {
+      return { ok: false, error: err.message || "An unexpected error occurred" };
     }
-    // Demo / offline mode
-    setUser({ id: "demo", name: "Demo User", email: "demo@transitops.io", role: selectedRole, region: "Region K" });
-    if (selectedRole) setRole(selectedRole);
-    return { ok: true };
+  };
+
+  const signIn = async (selectedRole, email, password) => {
+    try {
+      // Try Supabase auth
+      if (supabase && email && password) {
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ 
+          email, 
+          password 
+        });
+
+        if (authError) {
+          // If auth fails, fall back to demo mode
+          setUser({ 
+            id: "demo", 
+            name: "Demo User", 
+            email: "demo@transitops.io", 
+            role: selectedRole, 
+            region: "Region K" 
+          });
+          setRole(selectedRole);
+          return { ok: true, isDemo: true };
+        }
+
+        if (authData?.user) {
+          // Fetch user profile from database
+          const { data: profileData, error: profileError } = await supabase
+            .from("user_profiles")
+            .select("*, roles(name)")
+            .eq("id", authData.user.id)
+            .single();
+
+          if (!profileError && profileData) {
+            // Use role from database profile
+            const userRole = profileData.roles?.name || selectedRole;
+            setUser({ 
+              id: authData.user.id, 
+              name: profileData.name, 
+              email: profileData.email, 
+              role: userRole, 
+              region: "Region K" 
+            });
+            setRole(userRole);
+            return { ok: true };
+          } else {
+            // Profile not found, use auth data
+            setUser({ 
+              id: authData.user.id, 
+              name: authData.user.email, 
+              email: authData.user.email, 
+              role: selectedRole, 
+              region: "Region K" 
+            });
+            setRole(selectedRole);
+            return { ok: true };
+          }
+        }
+      }
+
+      // Demo / offline mode
+      setUser({ 
+        id: "demo", 
+        name: "Demo User", 
+        email: "demo@transitops.io", 
+        role: selectedRole, 
+        region: "Region K" 
+      });
+      setRole(selectedRole);
+      return { ok: true, isDemo: true };
+    } catch (err) {
+      return { ok: false, error: err.message || "An unexpected error occurred" };
+    }
   };
 
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    setRole("Fleet Manager");
   };
 
   // ─── Vehicles ─────────────────────────────────────────────────────────────────
@@ -290,7 +404,7 @@ export function AppDataProvider({ children }) {
   const value = useMemo(
     () => ({
       user, role, loading,
-      signIn, signOut, setRole,
+      signIn, signUp, signOut, setRole,
       vehicles, drivers, trips, maintenanceLogs, fuelLogs, expenses,
       addVehicle, updateVehicleStatus,
       addDriver, updateDriverStatus,

@@ -3,7 +3,7 @@
 
 export const ROLES = {
   FLEET_MANAGER: 'Fleet Manager',
-  DISPATCHER: 'Dispatcher',
+  DISPATCHER: 'Dispatcher', // Called "Driver" in docs but represents dispatcher/operations role
   SAFETY_OFFICER: 'Safety Officer',
   FINANCIAL_ANALYST: 'Financial Analyst'
 };
@@ -30,45 +30,45 @@ export const PERMISSIONS = {
   VIEW_SETTINGS: 'view_settings',
 };
 
-// Role Permission Matrix (Simplified per document)
+// Role Permission Matrix (Based on official documentation)
 const ROLE_PERMISSIONS = {
   // Fleet Manager: Oversees fleet assets, maintenance, vehicle lifecycle, and operational efficiency
   [ROLES.FLEET_MANAGER]: [
-    PERMISSIONS.MANAGE_VEHICLES,
-    PERMISSIONS.VIEW_VEHICLES,
-    PERMISSIONS.MANAGE_MAINTENANCE,
-    PERMISSIONS.VIEW_MAINTENANCE,
-    PERMISSIONS.VIEW_DRIVERS,
-    PERMISSIONS.VIEW_TRIPS,
-    PERMISSIONS.VIEW_FUEL_EXPENSES,
-    PERMISSIONS.VIEW_REPORTS,
-    PERMISSIONS.MANAGE_SETTINGS,
+    PERMISSIONS.MANAGE_VEHICLES,     // Manages vehicle registry and lifecycle
+    PERMISSIONS.VIEW_VEHICLES,       // Monitors asset conditions
+    PERMISSIONS.MANAGE_MAINTENANCE,  // Oversees maintenance logs, puts vehicles "In Shop"
+    PERMISSIONS.VIEW_MAINTENANCE,    // Monitors maintenance records
+    PERMISSIONS.VIEW_DRIVERS,        // Monitors operational efficiency
+    PERMISSIONS.VIEW_TRIPS,          // Monitors operational efficiency
+    PERMISSIONS.VIEW_FUEL_EXPENSES,  // Monitors operational costs
+    PERMISSIONS.VIEW_REPORTS,        // Monitors operational efficiency through dashboards and reports
+    PERMISSIONS.MANAGE_SETTINGS,     // System administration
     PERMISSIONS.VIEW_SETTINGS,
   ],
 
-  // Dispatcher: Creates trips, assigns vehicles and drivers, and monitors active deliveries
+  // Dispatcher (called "Driver" in docs): Creates trips, assigns vehicles and drivers, monitors active deliveries
   [ROLES.DISPATCHER]: [
-    PERMISSIONS.VIEW_VEHICLES,
-    PERMISSIONS.VIEW_DRIVERS,
-    PERMISSIONS.MANAGE_TRIPS,
-    PERMISSIONS.VIEW_TRIPS,
+    PERMISSIONS.VIEW_VEHICLES,       // To assign available vehicles to trips
+    PERMISSIONS.VIEW_DRIVERS,        // To assign available drivers to trips
+    PERMISSIONS.MANAGE_TRIPS,        // Creates and manages trips (draft, dispatch, complete)
+    PERMISSIONS.VIEW_TRIPS,          // Monitors active deliveries and routes
   ],
 
   // Safety Officer: Ensures driver compliance, tracks license validity, and monitors safety scores
   [ROLES.SAFETY_OFFICER]: [
-    PERMISSIONS.MANAGE_DRIVERS,
-    PERMISSIONS.VIEW_DRIVERS,
-    PERMISSIONS.VIEW_TRIPS,
-    PERMISSIONS.VIEW_VEHICLES,
+    PERMISSIONS.MANAGE_DRIVERS,      // Manages driver compliance
+    PERMISSIONS.VIEW_DRIVERS,        // Tracks driver license validity and safety scores
+    PERMISSIONS.VIEW_TRIPS,          // Monitors trips for safety tracking
+    PERMISSIONS.VIEW_VEHICLES,       // Views fleet safety metrics
   ],
 
   // Financial Analyst: Reviews operational expenses, fuel consumption, maintenance costs, and profitability
   [ROLES.FINANCIAL_ANALYST]: [
-    PERMISSIONS.VIEW_VEHICLES,
-    PERMISSIONS.VIEW_MAINTENANCE,
-    PERMISSIONS.MANAGE_FUEL_EXPENSES,
-    PERMISSIONS.VIEW_FUEL_EXPENSES,
-    PERMISSIONS.VIEW_REPORTS,
+    PERMISSIONS.VIEW_VEHICLES,       // For vehicle ROI analysis and acquisition costs
+    PERMISSIONS.VIEW_MAINTENANCE,    // Reviews maintenance costs
+    PERMISSIONS.MANAGE_FUEL_EXPENSES,// Manages and reviews fuel consumption
+    PERMISSIONS.VIEW_FUEL_EXPENSES,  // Reviews operational expenses
+    PERMISSIONS.VIEW_REPORTS,        // Analyzes profitability and ROI metrics
   ],
 };
 
