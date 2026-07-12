@@ -174,7 +174,7 @@ export default function Header() {
                 <div className="absolute top-full right-0 mt-2 w-80 bg-white border border-outline-variant rounded-xl shadow-xl z-50 overflow-hidden">
                   <div className="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
                     <h4 className="text-headline-md font-bold text-on-surface">Notifications</h4>
-                    <span className="text-label-caps text-primary cursor-pointer hover:underline">Mark all read</span>
+                    <span className="text-label-caps text-primary cursor-pointer hover:underline" onClick={() => { alert("All notifications marked as read!"); setShowNotifications(false); }}>Mark all read</span>
                   </div>
                   <ul className="max-h-64 overflow-y-auto divide-y divide-outline-variant">
                     {notifications.map((n) => (
@@ -190,7 +190,7 @@ export default function Header() {
                     ))}
                   </ul>
                   <div className="p-3 border-t border-outline-variant text-center">
-                    <span className="text-body-md text-primary font-bold cursor-pointer hover:underline">View All Activity</span>
+                    <span className="text-body-md text-primary font-bold cursor-pointer hover:underline" onClick={() => { alert("Full activity log is coming soon!"); setShowNotifications(false); }}>View All Activity</span>
                   </div>
                 </div>
               )}
@@ -212,15 +212,15 @@ export default function Header() {
                     <h4 className="text-body-md font-bold text-on-surface">Help & Resources</h4>
                   </div>
                   <ul className="divide-y divide-outline-variant">
-                    <li className="p-3 hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-3" onClick={() => setShowHelp(false)}>
+                    <li className="p-3 hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-3" onClick={() => { alert("Documentation is currently being written by our team!"); setShowHelp(false); }}>
                       <span className="material-symbols-outlined text-secondary text-[18px]">menu_book</span>
                       <span className="text-body-md text-on-surface">Documentation</span>
                     </li>
-                    <li className="p-3 hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-3" onClick={() => setShowHelp(false)}>
+                    <li className="p-3 hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-3" onClick={() => { alert("Support is available at support@transitops.io"); setShowHelp(false); }}>
                       <span className="material-symbols-outlined text-secondary text-[18px]">support_agent</span>
                       <span className="text-body-md text-on-surface">Contact Support</span>
                     </li>
-                    <li className="p-3 hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-3" onClick={() => setShowHelp(false)}>
+                    <li className="p-3 hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-3" onClick={() => { alert("Shortcuts feature will be enabled in the next release!"); setShowHelp(false); }}>
                       <span className="material-symbols-outlined text-secondary text-[18px]">keyboard</span>
                       <span className="text-body-md text-on-surface">Shortcuts</span>
                     </li>
