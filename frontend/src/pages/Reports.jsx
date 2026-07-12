@@ -51,7 +51,7 @@ export default function Reports() {
   // Monthly revenue data based on actual completed trips
   const monthlyRevenue = useMemo(() => {
     const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    const currentYear = new Date().getFullYear();
+    const currentYear = new Date().getUTCFullYear();
     
     // Calculate revenue per month from actual completed trips
     const monthlyData = months.map((month, index) => {
@@ -59,8 +59,9 @@ export default function Reports() {
       const monthTrips = trips.filter(trip => {
         if (trip.status !== 'Completed' || !trip.completedAt) return false;
         const completedDate = new Date(trip.completedAt);
-        return completedDate.getFullYear() === currentYear && 
-               completedDate.getMonth() === index;
+        // Use UTC methods to avoid timezone shifting (dates stored as YYYY-MM-DD)
+        return completedDate.getUTCFullYear() === currentYear && 
+               completedDate.getUTCMonth() === index;
       });
       
       // Calculate revenue based on trip characteristics
@@ -91,13 +92,13 @@ export default function Reports() {
       };
     });
     
-    // Calculate heights based on maximum revenue for proper scaling
-    const maxRevenue = Math.max(...monthlyData.map(m => m.revenue), 1); // Minimum 1 for scaling
+    // Calculate heights in pixels (max bar = 200px) for reliable rendering
+    const maxRevenue = Math.max(...monthlyData.map(m => m.revenue), 1);
+    const MAX_BAR_PX = 200;
     
-    return monthlyData.map((monthData, index) => ({
+    return monthlyData.map((monthData) => ({
       ...monthData,
-      height: monthData.revenue > 0 ? 
-        Math.max(40, (monthData.revenue / maxRevenue) * 85) : 0 // 0% for zero revenue, minimum 40% for revenue months
+      heightPx: monthData.revenue > 0 ? Math.max(6, (monthData.revenue / maxRevenue) * MAX_BAR_PX) : 0
     }));
   }, [trips, vehicles]);
 
@@ -289,8 +290,8 @@ export default function Reports() {
 </div>
 {/* Charts Section */}
 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-{/* Monthly Revenue Bar Chart */}
-<div className="lg:col-span-2 bg-white p-6 rounded-xl border border-outline-variant">
+{/* Monthly Revenue Line Chart */}
+<div className="lg:col-span-2 bg-white p-6 rounded-xl border border-outline-variant overflow-hidden">
 <div className="flex items-center justify-between mb-4">
 <div>
 <h2 className="text-headline-md font-headline-md">Monthly Revenue</h2>
@@ -303,31 +304,227 @@ Based on completed trips • ₹15/km base + ₹2/kg cargo + vehicle type premiu
 <option>2025</option>
 </select>
 </div>
-<div className="flex items-end justify-between h-64 gap-1 px-4 overflow-x-auto">
-{monthlyRevenue.map((month, index) => {
-  const isCurrentMonth = index === new Date().getMonth();
-  return (
-    <div key={month.month} className="flex flex-col items-center flex-shrink-0 min-w-[60px]">
-      <div 
-        className={`w-full hover:bg-primary-container transition-all rounded-t ${
-          month.revenue === 0 ? 'border-b-2 border-gray-300' :
-          isCurrentMonth ? 'bg-primary min-h-[40px]' : 'bg-secondary-container min-h-[40px]'
-        }`}
-        style={{ height: month.revenue > 0 ? `${month.height}%` : '2px' }}
-        title={`${month.month}: ₹${month.revenue.toLocaleString()} (${month.tripCount} trips)`}
-      ></div>
-      <span className={`text-label-caps font-label-caps mt-2 text-xs ${
-        isCurrentMonth ? 'font-bold text-primary' : 
-        month.revenue > 0 ? 'text-secondary' : 'text-gray-400'
-      }`}>
-        {month.month}
-      </span>
-      <span className="text-[10px] text-gray-500 mt-1">
-        {month.tripCount > 0 ? `${month.tripCount}` : '0'}
-      </span>
+<div className="relative px-4 pb-8 overflow-visible" style={{ height: '240px', minHeight: '240px' }}>
+  {/* Y-axis labels */}
+  <div className="absolute left-0 top-0 bottom-8 w-12 flex flex-col justify-between text-xs text-gray-500">
+    {[...Array(5)].map((_, i) => {
+      const maxRevenue = Math.max(...monthlyRevenue.map(m => m.revenue), 1);
+      const value = Math.round(maxRevenue * (4 - i) / 4);
+      return (
+        <div key={i} className="text-right pr-2">
+          {value > 0 ? `₹${(value / 1000).toFixed(0)}k` : '0'}
+        </div>
+      );
+    })}
+  </div>
+
+  {/* Chart area with padding for tooltips */}
+  <div className="ml-12 h-full relative" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+    {/* Horizontal grid lines */}
+    <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className="border-b border-gray-100"></div>
+      ))}
     </div>
-  );
-})}
+
+    {/* SVG Line Chart */}
+    <svg className="absolute inset-0 w-full h-full overflow-visible" style={{ top: '40px', height: 'calc(100% - 80px)' }} viewBox="0 0 800 200" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="rgb(103, 80, 164)" />
+          <stop offset="100%" stopColor="rgb(103, 80, 164)" />
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      {/* Area under the line */}
+      <defs>
+        <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="rgb(103, 80, 164)" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="rgb(103, 80, 164)" stopOpacity="0.02" />
+        </linearGradient>
+      </defs>
+
+      {(() => {
+        const maxRevenue = Math.max(...monthlyRevenue.map(m => m.revenue), 1);
+        const chartHeight = 200;
+        const chartWidth = 800;
+        const monthWidth = chartWidth / (monthlyRevenue.length - 1);
+        
+        const points = monthlyRevenue.map((month, index) => {
+          const x = index * monthWidth;
+          const y = chartHeight - (month.revenue / maxRevenue) * chartHeight;
+          return { x, y, month };
+        });
+
+        const linePathData = points.map((p, i) => 
+          `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`
+        ).join(' ');
+
+        const areaPathData = `${linePathData} L ${points[points.length - 1].x} ${chartHeight} L 0 ${chartHeight} Z`;
+
+        return (
+          <>
+            {/* Area */}
+            <path
+              d={areaPathData}
+              fill="url(#areaGradient)"
+            />
+            
+            {/* Line */}
+            <path
+              d={linePathData}
+              fill="none"
+              stroke="url(#lineGradient)"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#glow)"
+            />
+            
+            {/* Data points */}
+            {points.map((point, index) => {
+              const isCurrentMonth = index === new Date().getUTCMonth();
+              const month = monthlyRevenue[index];
+              
+              // Smart tooltip positioning - avoid overlap and edges
+              let tooltipX = point.x;
+              let tooltipY = point.y - 55;
+              let tooltipAnchor = "middle";
+              
+              // If point is too high, position tooltip below
+              if (point.y < 60) {
+                tooltipY = point.y + 55;
+              }
+              
+              // If point is on the left edge, shift right
+              if (index < 2) {
+                tooltipX = point.x + 45;
+                tooltipAnchor = "start";
+              }
+              // If point is on the right edge, shift left
+              else if (index > monthlyRevenue.length - 3) {
+                tooltipX = point.x - 45;
+                tooltipAnchor = "end";
+              }
+              
+              return (
+                <g key={index}>
+                  <circle
+                    cx={point.x}
+                    cy={point.y}
+                    r={month.revenue > 0 ? (isCurrentMonth ? 6 : 4) : 2}
+                    fill={isCurrentMonth ? "rgb(103, 80, 164)" : "white"}
+                    stroke={month.revenue > 0 ? "rgb(103, 80, 164)" : "rgb(229, 231, 235)"}
+                    strokeWidth={isCurrentMonth ? 3 : 2}
+                    className="cursor-pointer transition-all"
+                  />
+                  
+                  {/* Tooltip trigger area */}
+                  <circle
+                    cx={point.x}
+                    cy={point.y}
+                    r={25}
+                    fill="transparent"
+                    className="peer cursor-pointer"
+                  />
+                  
+                  {/* Hover tooltip */}
+                  {month.revenue > 0 && (
+                    <g className="opacity-0 peer-hover:opacity-100 transition-opacity pointer-events-none" style={{ overflow: 'visible' }}>
+                      {/* Tooltip background */}
+                      <rect
+                        x={tooltipAnchor === "middle" ? tooltipX - 60 : (tooltipAnchor === "start" ? tooltipX - 5 : tooltipX - 115)}
+                        y={tooltipY - 28}
+                        width="120"
+                        height="56"
+                        rx="8"
+                        fill="rgb(17, 24, 39)"
+                        opacity="0.95"
+                      />
+                      
+                      {/* Month label */}
+                      <text
+                        x={tooltipAnchor === "middle" ? tooltipX : (tooltipAnchor === "start" ? tooltipX + 55 : tooltipX - 55)}
+                        y={tooltipY - 10}
+                        textAnchor="middle"
+                        fill="rgb(156, 163, 175)"
+                        fontSize="10"
+                        fontWeight="600"
+                      >
+                        {month.month} 2026
+                      </text>
+                      
+                      {/* Revenue */}
+                      <text
+                        x={tooltipAnchor === "middle" ? tooltipX : (tooltipAnchor === "start" ? tooltipX + 55 : tooltipX - 55)}
+                        y={tooltipY + 8}
+                        textAnchor="middle"
+                        fill="white"
+                        fontSize="14"
+                        fontWeight="bold"
+                      >
+                        ₹{month.revenue.toLocaleString()}
+                      </text>
+                      
+                      {/* Trip count */}
+                      <text
+                        x={tooltipAnchor === "middle" ? tooltipX : (tooltipAnchor === "start" ? tooltipX + 55 : tooltipX - 55)}
+                        y={tooltipY + 24}
+                        textAnchor="middle"
+                        fill="rgb(156, 163, 175)"
+                        fontSize="10"
+                      >
+                        {month.tripCount} trip{month.tripCount !== 1 ? 's' : ''}
+                      </text>
+                      
+                      {/* Connector line to point */}
+                      <line
+                        x1={point.x}
+                        y1={point.y}
+                        x2={tooltipAnchor === "middle" ? point.x : (tooltipAnchor === "start" ? tooltipX + 55 : tooltipX - 55)}
+                        y2={tooltipY > point.y ? tooltipY - 28 : tooltipY + 28}
+                        stroke="rgb(156, 163, 175)"
+                        strokeWidth="1.5"
+                        strokeDasharray="3,3"
+                        opacity="0.5"
+                      />
+                    </g>
+                  )}
+                </g>
+              );
+            })}
+          </>
+        );
+      })()}
+    </svg>
+
+    {/* X-axis labels */}
+    <div className="absolute bottom-0 left-0 right-0 flex justify-between">
+      {monthlyRevenue.map((month, index) => {
+        const isCurrentMonth = index === new Date().getUTCMonth();
+        return (
+          <div key={month.month} className="flex flex-col items-center" style={{ width: '60px' }}>
+            <span className={`text-label-caps font-label-caps text-xs ${
+              isCurrentMonth ? 'font-bold text-primary' :
+              month.revenue > 0 ? 'text-secondary' : 'text-gray-400'
+            }`}>
+              {month.month}
+            </span>
+            <span className="text-[10px] text-gray-500 mt-0.5">
+              {month.tripCount > 0 ? `${month.tripCount}` : '0'}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  </div>
 </div>
 <div className="mt-6 pt-6 border-t border-outline-variant">
 <div className="grid grid-cols-3 gap-4 mb-4">
