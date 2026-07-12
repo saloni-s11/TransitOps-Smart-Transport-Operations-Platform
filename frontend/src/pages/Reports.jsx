@@ -93,12 +93,12 @@ export default function Reports() {
     });
     
     // Calculate heights based on maximum revenue for proper scaling
-    const maxRevenue = Math.max(...monthlyData.map(m => m.revenue), 1); // Minimum 1 for scaling
+    const maxRevenue = Math.max(...monthlyData.map(m => m.revenue), 1);
     
-    return monthlyData.map((monthData, index) => ({
+    return monthlyData.map((monthData) => ({
       ...monthData,
-      height: monthData.revenue > 0 ? 
-        Math.max(40, (monthData.revenue / maxRevenue) * 85) : 0 // 0% for zero revenue, minimum 40% for revenue months
+      // Scale from 0-85% of chart height, no minimum floor so differences are visible
+      height: monthData.revenue > 0 ? Math.max(4, (monthData.revenue / maxRevenue) * 85) : 0
     }));
   }, [trips, vehicles]);
 
@@ -304,18 +304,29 @@ Based on completed trips • ₹15/km base + ₹2/kg cargo + vehicle type premiu
 <option>2025</option>
 </select>
 </div>
-<div className="flex items-end justify-between h-64 gap-1 px-4 overflow-x-auto">
+<div className="flex items-end justify-between h-64 gap-1 px-4 overflow-x-auto overflow-y-visible">
 {monthlyRevenue.map((month, index) => {
   const isCurrentMonth = index === new Date().getUTCMonth();
   return (
-    <div key={month.month} className="flex flex-col items-center flex-shrink-0 min-w-[60px]">
+    <div key={month.month} className="flex flex-col items-center flex-shrink-0 min-w-[60px] group/bar relative">
+      {/* Hover tooltip */}
+      {month.revenue > 0 && (
+        <div className="absolute bottom-[calc(100%-60px)] mb-1 hidden group-hover/bar:flex flex-col items-center z-20 pointer-events-none">
+          <div className="bg-on-surface text-surface text-xs font-bold px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
+            <p className="text-center">₹{month.revenue.toLocaleString()}</p>
+            <p className="text-center text-[10px] opacity-70">{month.tripCount} trip{month.tripCount !== 1 ? 's' : ''}</p>
+          </div>
+          <div className="w-2 h-2 bg-on-surface rotate-45 -mt-1"></div>
+        </div>
+      )}
       <div 
-        className={`w-full hover:bg-primary-container transition-all rounded-t ${
+        className={`w-full transition-all rounded-t cursor-pointer ${
           month.revenue === 0 ? 'border-b-2 border-gray-300' :
-          isCurrentMonth ? 'bg-primary min-h-[40px]' : 'bg-secondary-container min-h-[40px]'
+          isCurrentMonth
+            ? 'bg-primary group-hover/bar:brightness-110'
+            : 'bg-secondary-container group-hover/bar:bg-primary/60'
         }`}
         style={{ height: month.revenue > 0 ? `${month.height}%` : '2px' }}
-        title={`${month.month}: ₹${month.revenue.toLocaleString()} (${month.tripCount} trips)`}
       ></div>
       <span className={`text-label-caps font-label-caps mt-2 text-xs ${
         isCurrentMonth ? 'font-bold text-primary' : 

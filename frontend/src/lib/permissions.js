@@ -27,6 +27,7 @@ export const PERMISSIONS = {
   
   VIEW_REPORTS: 'view_reports',
   MANAGE_SETTINGS: 'manage_settings',
+  VIEW_SETTINGS: 'view_settings',
 };
 
 // Role Permission Matrix (Simplified per document)
@@ -34,10 +35,15 @@ const ROLE_PERMISSIONS = {
   // Fleet Manager: Oversees fleet assets, maintenance, vehicle lifecycle, and operational efficiency
   [ROLES.FLEET_MANAGER]: [
     PERMISSIONS.MANAGE_VEHICLES,
+    PERMISSIONS.VIEW_VEHICLES,
     PERMISSIONS.MANAGE_MAINTENANCE,
+    PERMISSIONS.VIEW_MAINTENANCE,
     PERMISSIONS.VIEW_DRIVERS,
+    PERMISSIONS.VIEW_TRIPS,
+    PERMISSIONS.VIEW_FUEL_EXPENSES,
     PERMISSIONS.VIEW_REPORTS,
     PERMISSIONS.MANAGE_SETTINGS,
+    PERMISSIONS.VIEW_SETTINGS,
   ],
 
   // Dispatcher: Creates trips, assigns vehicles and drivers, and monitors active deliveries
@@ -45,11 +51,13 @@ const ROLE_PERMISSIONS = {
     PERMISSIONS.VIEW_VEHICLES,
     PERMISSIONS.VIEW_DRIVERS,
     PERMISSIONS.MANAGE_TRIPS,
+    PERMISSIONS.VIEW_TRIPS,
   ],
 
   // Safety Officer: Ensures driver compliance, tracks license validity, and monitors safety scores
   [ROLES.SAFETY_OFFICER]: [
     PERMISSIONS.MANAGE_DRIVERS,
+    PERMISSIONS.VIEW_DRIVERS,
     PERMISSIONS.VIEW_TRIPS,
     PERMISSIONS.VIEW_VEHICLES,
   ],
@@ -59,6 +67,7 @@ const ROLE_PERMISSIONS = {
     PERMISSIONS.VIEW_VEHICLES,
     PERMISSIONS.VIEW_MAINTENANCE,
     PERMISSIONS.MANAGE_FUEL_EXPENSES,
+    PERMISSIONS.VIEW_FUEL_EXPENSES,
     PERMISSIONS.VIEW_REPORTS,
   ],
 };
@@ -111,7 +120,7 @@ export function getDefaultRoute(role) {
  */
 export function canAccessRoute(role, route) {
   const routePermissions = {
-    '/dashboard':      [PERMISSIONS.MANAGE_VEHICLES, PERMISSIONS.VIEW_VEHICLES, PERMISSIONS.MANAGE_TRIPS, PERMISSIONS.MANAGE_FUEL_EXPENSES],
+    '/dashboard':      [PERMISSIONS.MANAGE_VEHICLES, PERMISSIONS.VIEW_VEHICLES, PERMISSIONS.MANAGE_TRIPS, PERMISSIONS.MANAGE_FUEL_EXPENSES, PERMISSIONS.VIEW_REPORTS],
     '/vehicles':       [PERMISSIONS.MANAGE_VEHICLES, PERMISSIONS.VIEW_VEHICLES],
     '/vehicles/add':   [PERMISSIONS.MANAGE_VEHICLES],
     '/drivers':        [PERMISSIONS.MANAGE_DRIVERS, PERMISSIONS.VIEW_DRIVERS],
@@ -120,7 +129,7 @@ export function canAccessRoute(role, route) {
     '/maintenance':    [PERMISSIONS.MANAGE_MAINTENANCE, PERMISSIONS.VIEW_MAINTENANCE],
     '/fuel-expenses':  [PERMISSIONS.MANAGE_FUEL_EXPENSES, PERMISSIONS.VIEW_FUEL_EXPENSES],
     '/reports':        [PERMISSIONS.VIEW_REPORTS],
-    '/settings':       [PERMISSIONS.MANAGE_SETTINGS],
+    '/settings':       [PERMISSIONS.MANAGE_SETTINGS, PERMISSIONS.VIEW_SETTINGS],
   };
 
   const requiredPermissions = routePermissions[route];

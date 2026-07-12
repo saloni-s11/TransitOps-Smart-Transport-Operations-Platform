@@ -8,7 +8,7 @@ const NAV_ITEMS = [
     to: "/dashboard", 
     label: "Dashboard", 
     icon: "dashboard",
-    permission: PERMISSIONS.VIEW_VEHICLES
+    permission: null // Dashboard accessible to all authenticated users
   },
   { 
     to: "/vehicles", 
@@ -59,15 +59,14 @@ export default function Sidebar() {
   const { signOut, role, user } = useAppData();
   const { can } = usePermissions();
 
-  // Filter navigation items based on user permissions
-  const visibleNavItems = NAV_ITEMS.filter(item => {
-    // Show item if no permission required or user has the permission
-    return !item.permission || can(item.permission);
-  });
-
   const handleLogout = () => {
     signOut();
     navigate("/login");
+  };
+
+  // Check if user has access to an item
+  const hasAccess = (item) => {
+    return !item.permission || can(item.permission);
   };
 
   return (
@@ -97,20 +96,39 @@ export default function Sidebar() {
           </div>
         </div>
         <nav className="space-y-1">
-          {visibleNavItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-r-lg transition-all text-body-md font-body-md group ${
-                  isActive ? "sidebar-active" : "text-secondary hover:bg-surface-container-low"
-                }`
-              }
-            >
-              <span className="material-symbols-outlined group-hover:scale-110 transition-transform">{item.icon}</span>
-              {item.label}
-            </NavLink>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const hasItemAccess = hasAccess(item);
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 rounded-r-lg transition-all text-body-md font-body-md group relative ${
+                    !hasItemAccess
+                      ? "opacity-50 cursor-not-allowed"
+                      : isActive 
+                        ? "sidebar-active" 
+                        : "text-secondary hover:bg-surface-container-low"
+                  }`
+                }
+                onClick={(e) => {
+                  // Prevent navigation if user doesn't have access
+                  if (!hasItemAccess) {
+                    e.preventDefault();
+                  }
+                }}
+                title={!hasItemAccess ? "You don't have permission to access this page" : item.label}
+              >
+                <span className="material-symbols-outlined group-hover:scale-110 transition-transform">{item.icon}</span>
+                {item.label}
+                {!hasItemAccess && (
+                  <span className="material-symbols-outlined text-[16px] ml-auto text-outline" title="Restricted">
+                    lock
+                  </span>
+                )}
+              </NavLink>
+            );
+          })}
         </nav>
       </div>
       <div className="mt-auto p-4 border-t border-outline-variant bg-surface-container-lowest">
