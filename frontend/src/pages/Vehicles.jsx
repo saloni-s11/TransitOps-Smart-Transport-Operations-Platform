@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { useAppData } from "../context/AppDataContext";
 
 export default function Vehicles() {
-  const { vehicles } = useAppData();
+  const { vehicles, updateVehicleStatus } = useAppData();
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeActionMenu, setActiveActionMenu] = useState(null);
   const [typeFilter, setTypeFilter] = useState("Type: All");
   const [statusFilter, setStatusFilter] = useState("Status: All");
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,7 +36,7 @@ export default function Vehicles() {
     return matchesSearch && matchesType && matchesStatus;
   });
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
   const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage) || 1;
   const paginatedVehicles = filteredVehicles.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
@@ -102,7 +103,16 @@ export default function Vehicles() {
 </select>
 </div>
 <div className="flex items-end pb-1 h-full">
-<button className="p-2 text-secondary hover:bg-surface-container rounded transition-colors" title="Refresh Data">
+<button 
+  onClick={() => {
+    setSearchTerm("");
+    setTypeFilter("Type: All");
+    setStatusFilter("Status: All");
+    setCurrentPage(1);
+  }}
+  className="p-2 text-secondary hover:bg-surface-container rounded transition-colors" 
+  title="Reset Filters"
+>
 <span className="material-symbols-outlined">refresh</span>
 </button>
 </div>
@@ -138,8 +148,20 @@ export default function Vehicles() {
   <td className="px-4 py-4 text-center">
   <span className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase ${getStatusBadgeStyle(vehicle.status)}`}>{vehicle.status}</span>
   </td>
-  <td className="px-4 py-4 text-center">
-  <button className="material-symbols-outlined text-secondary hover:text-primary transition-colors">more_vert</button>
+  <td className="px-4 py-4 text-center relative">
+  <button 
+    onClick={() => setActiveActionMenu(activeActionMenu === vehicle.id ? null : vehicle.id)}
+    className="material-symbols-outlined text-secondary hover:text-primary transition-colors"
+  >
+    more_vert
+  </button>
+  {activeActionMenu === vehicle.id && (
+    <div className="absolute right-8 top-8 w-36 bg-white shadow-lg border border-outline-variant rounded z-10 flex flex-col text-left py-1">
+      <button onClick={() => { updateVehicleStatus(vehicle.id, 'Available'); setActiveActionMenu(null); }} className="px-4 py-2 hover:bg-surface-container-low text-sm">Set Available</button>
+      <button onClick={() => { updateVehicleStatus(vehicle.id, 'In Shop'); setActiveActionMenu(null); }} className="px-4 py-2 hover:bg-surface-container-low text-sm">Send to Shop</button>
+      <button onClick={() => { updateVehicleStatus(vehicle.id, 'Retired'); setActiveActionMenu(null); }} className="px-4 py-2 hover:bg-surface-container-low text-sm text-red-600">Retire</button>
+    </div>
+  )}
   </td>
   </tr>
   ))
@@ -162,7 +184,7 @@ export default function Vehicles() {
 <button 
   disabled={currentPage === 1}
   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-  className="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high transition-colors disabled:opacity-50">
+  className="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent">
 <span className="material-symbols-outlined text-[20px]">chevron_left</span>
 </button>
 
@@ -179,7 +201,7 @@ export default function Vehicles() {
 <button 
   disabled={currentPage === totalPages}
   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-  className="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high transition-colors disabled:opacity-50">
+  className="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent">
 <span className="material-symbols-outlined text-[20px]">chevron_right</span>
 </button>
 </div>
