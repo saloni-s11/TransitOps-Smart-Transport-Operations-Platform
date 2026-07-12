@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAppData } from "../context/AppDataContext";
+import { ProtectedAction } from "../components/common/ProtectedAction";
+import { PERMISSIONS } from "../lib/permissions";
 
 export default function Vehicles() {
   const { vehicles, updateVehicleStatus } = useAppData();
@@ -54,10 +56,12 @@ export default function Vehicles() {
 <h1 className="text-display font-display text-on-surface">Vehicle Registry</h1>
 <p className="text-body-md text-secondary mt-1">Manage and monitor your entire operational fleet assets.</p>
 </div>
-<Link to="/vehicles/add" className="bg-primary-container text-on-primary-container px-6 py-2.5 rounded shadow-sm hover:opacity-90 active:scale-95 transition-all font-bold flex items-center gap-2">
-<span className="material-symbols-outlined">add_circle</span>
-                    Add Vehicle
-                </Link>
+<ProtectedAction permission={PERMISSIONS.ADD_VEHICLE} mode="hide">
+  <Link to="/vehicles/add" className="bg-primary-container text-on-primary-container px-6 py-2.5 rounded shadow-sm hover:opacity-90 active:scale-95 transition-all font-bold flex items-center gap-2">
+    <span className="material-symbols-outlined">add_circle</span>
+    Add Vehicle
+  </Link>
+</ProtectedAction>
 </div>
 {/* Filters */}
 <div className="bg-white p-4 border border-outline-variant flex items-center gap-4 flex-wrap">
@@ -149,12 +153,14 @@ export default function Vehicles() {
   <span className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase ${getStatusBadgeStyle(vehicle.status)}`}>{vehicle.status}</span>
   </td>
   <td className="px-4 py-4 text-center relative">
-  <button 
-    onClick={() => setActiveActionMenu(activeActionMenu === vehicle.id ? null : vehicle.id)}
-    className="material-symbols-outlined text-secondary hover:text-primary transition-colors"
-  >
-    more_vert
-  </button>
+  <ProtectedAction permission={PERMISSIONS.EDIT_VEHICLE} mode="tooltip">
+    <button 
+      onClick={() => setActiveActionMenu(activeActionMenu === vehicle.id ? null : vehicle.id)}
+      className="material-symbols-outlined text-secondary hover:text-primary transition-colors"
+    >
+      more_vert
+    </button>
+  </ProtectedAction>
   {activeActionMenu === vehicle.id && (
     <div className="absolute right-8 top-8 w-36 bg-white shadow-lg border border-outline-variant rounded z-10 flex flex-col text-left py-1">
       <button onClick={() => { updateVehicleStatus(vehicle.id, 'Available'); setActiveActionMenu(null); }} className="px-4 py-2 hover:bg-surface-container-low text-sm">Set Available</button>

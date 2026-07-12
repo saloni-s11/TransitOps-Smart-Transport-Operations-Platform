@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useAppData } from "../context/AppDataContext";
+import { ProtectedAction } from "../components/common/ProtectedAction";
+import { usePermissions } from "../hooks/usePermissions";
+import { PERMISSIONS } from "../lib/permissions";
 
 const SERVICE_TYPES = [
   "Oil Change",
@@ -14,6 +17,7 @@ const SERVICE_TYPES = [
 
 export default function Maintenance() {
   const { vehicles, maintenanceLogs, addMaintenanceLog, completeMaintenanceLog } = useAppData();
+  const { can } = usePermissions();
 
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [serviceType, setServiceType] = useState("");
@@ -154,6 +158,13 @@ export default function Maintenance() {
               <span className="material-symbols-outlined text-primary">history_edu</span>
             </div>
 
+            {!can(PERMISSIONS.ADD_MAINTENANCE) && (
+              <div className="mb-4 p-3 bg-surface-container border border-outline-variant rounded-lg flex items-center gap-2 text-secondary">
+                <span className="material-symbols-outlined text-[18px]">lock</span>
+                <span className="text-body-md">View only — you don't have permission to log service records.</span>
+              </div>
+            )}
+
             {formSuccess && (
               <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-green-700">
                 <span className="material-symbols-outlined text-[18px]">check_circle</span>
@@ -168,6 +179,7 @@ export default function Maintenance() {
             )}
 
             <form className="space-y-4" onSubmit={handleSubmit}>
+              <div className={!can(PERMISSIONS.ADD_MAINTENANCE) ? 'pointer-events-none opacity-50' : ''}>
               <div>
                 <label className="block text-body-md font-body-md mb-1.5 text-secondary">Vehicle <span className="text-error">*</span></label>
                 <select
@@ -244,13 +256,16 @@ export default function Maintenance() {
                 <span className="material-symbols-outlined text-amber-600 text-[18px] mt-0.5">info</span>
                 <p className="text-body-sm text-amber-800">Logging a new record sets the vehicle status to <strong>In Shop</strong> and removes it from the dispatch pool.</p>
               </div>
+              </div>
 
-              <button
-                className="w-full bg-primary text-on-primary py-3 rounded-lg font-bold hover:brightness-90 transition-all shadow-md active:scale-95"
-                type="submit"
-              >
-                Save Service Record
-              </button>
+              <ProtectedAction permission={PERMISSIONS.ADD_MAINTENANCE} mode="tooltip">
+                <button
+                  className="w-full bg-primary text-on-primary py-3 rounded-lg font-bold hover:brightness-90 transition-all shadow-md active:scale-95"
+                  type="submit"
+                >
+                  Save Service Record
+                </button>
+              </ProtectedAction>
             </form>
           </section>
 
@@ -375,13 +390,15 @@ export default function Maintenance() {
                       </td>
                       <td className="px-6 py-4">
                         {log.status === "Active" ? (
-                          <button
-                            onClick={() => completeMaintenanceLog(log.id)}
-                            className="flex items-center gap-1.5 text-primary font-bold text-body-md hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors"
-                          >
-                            <span className="material-symbols-outlined text-[16px]">task_alt</span>
-                            Mark Complete
-                          </button>
+                          <ProtectedAction permission={PERMISSIONS.COMPLETE_MAINTENANCE} mode="tooltip">
+                            <button
+                              onClick={() => completeMaintenanceLog(log.id)}
+                              className="flex items-center gap-1.5 text-primary font-bold text-body-md hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                              <span className="material-symbols-outlined text-[16px]">task_alt</span>
+                              Mark Complete
+                            </button>
+                          </ProtectedAction>
                         ) : (
                           <span className="text-secondary text-body-sm italic">—</span>
                         )}

@@ -1,3 +1,6 @@
+import { ProtectedAction } from "../components/common/ProtectedAction";
+import { PERMISSIONS } from "../lib/permissions";
+
 export default function Settings() {
   return (
     <>
@@ -14,10 +17,12 @@ export default function Settings() {
 <h1 className="font-headline-lg text-headline-lg text-on-surface">Configuration</h1>
 <p className="text-body-md text-secondary">Manage platform-wide defaults and enterprise access controls.</p>
 </div>
-<button className="bg-primary-container text-on-primary-container font-semibold px-6 py-2 rounded-lg hover:opacity-80 active:scale-95 transition-all flex items-center gap-2">
-<span className="material-symbols-outlined">save</span>
+<ProtectedAction permission={PERMISSIONS.EDIT_SETTINGS} mode="tooltip">
+  <button className="bg-primary-container text-on-primary-container font-semibold px-6 py-2 rounded-lg hover:opacity-80 active:scale-95 transition-all flex items-center gap-2">
+    <span className="material-symbols-outlined">save</span>
                     Save changes
-                </button>
+  </button>
+</ProtectedAction>
 </div>
 <div className="grid grid-cols-12 gap-grid_gutter">
 {/* General Settings Section */}

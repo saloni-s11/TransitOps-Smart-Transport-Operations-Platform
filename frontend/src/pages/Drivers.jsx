@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAppData } from "../context/AppDataContext";
+import { ProtectedAction } from "../components/common/ProtectedAction";
+import { PERMISSIONS } from "../lib/permissions";
 
 export default function Drivers() {
   const { drivers, updateDriverStatus } = useAppData();
@@ -39,10 +41,12 @@ export default function Drivers() {
           <h1 className="text-display font-display text-on-surface">Drivers & Safety Profiles</h1>
           <p className="text-body-md text-secondary mt-1">Manage personnel, safety compliance, and operational availability.</p>
         </div>
-        <button className="bg-primary-container text-on-primary-container font-bold px-6 py-2.5 rounded shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
-          <span className="material-symbols-outlined">person_add</span>
-          Add Driver
-        </button>
+        <ProtectedAction permission={PERMISSIONS.ADD_DRIVER} mode="hide">
+          <button className="bg-primary-container text-on-primary-container font-bold px-6 py-2.5 rounded shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+            <span className="material-symbols-outlined">person_add</span>
+            Add Driver
+          </button>
+        </ProtectedAction>
       </div>
 
       {/* Filter & Toggle Bar */}
@@ -128,12 +132,14 @@ export default function Drivers() {
                       </span>
                     </td>
                     <td className="px-4 py-4 text-center relative">
-                      <button 
-                        onClick={() => setActiveActionMenu(activeActionMenu === driver.id ? null : driver.id)}
-                        className="material-symbols-outlined text-secondary hover:text-primary transition-colors"
-                      >
-                        more_vert
-                      </button>
+                      <ProtectedAction permission={PERMISSIONS.EDIT_DRIVER} mode="tooltip">
+                        <button
+                          onClick={() => setActiveActionMenu(activeActionMenu === driver.id ? null : driver.id)}
+                          className="material-symbols-outlined text-secondary hover:text-primary transition-colors"
+                        >
+                          more_vert
+                        </button>
+                      </ProtectedAction>
                       {activeActionMenu === driver.id && (
                         <div className="absolute right-8 top-8 w-36 bg-white shadow-lg border border-outline-variant rounded z-10 flex flex-col text-left py-1">
                           <button onClick={() => { updateDriverStatus(driver.id, 'Available'); setActiveActionMenu(null); }} className="px-4 py-2 hover:bg-surface-container-low text-sm">Set Available</button>

@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppData } from "../context/AppDataContext";
+import { ProtectedAction } from "../components/common/ProtectedAction";
+import { PERMISSIONS } from "../lib/permissions";
 
 export default function Dashboard() {
   const { vehicles, trips, drivers } = useAppData();
@@ -8,17 +10,14 @@ export default function Dashboard() {
 
   const [filterType, setFilterType] = useState("All Types");
   const [filterStatus, setFilterStatus] = useState("All Status");
-  const [filterRegion, setFilterRegion] = useState("All Regions");
-
   const filteredVehicles = useMemo(() => {
     return vehicles.filter(v => {
       const typeMatch = filterType === "All Types" || v.type === filterType.replace(/s$/, ""); // Truck(s), Van(s)
       const statusMatch = filterStatus === "All Status" || 
                          (filterStatus === "Maintenance" ? v.status === "In Shop" : v.status === filterStatus);
-      const regionMatch = filterRegion === "All Regions" || v.region === filterRegion;
-      return typeMatch && statusMatch && regionMatch;
+      return typeMatch && statusMatch;
     });
-  }, [vehicles, filterType, filterStatus, filterRegion]);
+  }, [vehicles, filterType, filterStatus]);
 
   // Computations based on filtered vehicles
   const activeVehicles = filteredVehicles.length;
@@ -71,24 +70,14 @@ export default function Dashboard() {
               <option>Maintenance</option>
             </select>
           </div>
-          <div className="space-y-1 shrink-0">
-            <label className="text-label-caps font-label-caps text-secondary block">REGION</label>
-            <select 
-              value={filterRegion}
-              onChange={(e) => setFilterRegion(e.target.value)}
-              className="bg-surface-container-low border-outline-variant rounded-lg text-body-md font-body-md px-4 py-2 focus:ring-primary min-w-[160px]">
-              <option>All Regions</option>
-              <option>Region K</option>
-              <option>Region B</option>
-              <option>Region Z</option>
-            </select>
-          </div>
-          <button 
-            onClick={() => navigate('/trips')}
-            className="ml-auto flex items-center gap-2 bg-primary text-white px-6 py-2 rounded-lg font-bold text-body-md hover:bg-opacity-90 transition-all active:scale-95 shadow-lg">
-            <span className="material-symbols-outlined text-[20px]">add</span>
-            New Dispatch
-          </button>
+          <ProtectedAction permission={PERMISSIONS.CREATE_TRIP} mode="hide">
+            <button
+              onClick={() => navigate('/trips')}
+              className="ml-auto flex items-center gap-2 bg-primary text-white px-6 py-2 rounded-lg font-bold text-body-md hover:bg-opacity-90 transition-all active:scale-95 shadow-lg">
+              <span className="material-symbols-outlined text-[20px]">add</span>
+              New Dispatch
+            </button>
+          </ProtectedAction>
         </div>
 
         {/* KPI Grid */}
@@ -262,9 +251,11 @@ export default function Dashboard() {
               <h4 className="text-body-md font-bold text-on-surface mb-2">Live Dispatch View</h4>
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                <p className="text-label-caps font-label-caps text-secondary">ALL REGIONS ACTIVE</p>
+                <p className="text-label-caps font-label-caps text-secondary">SYSTEM OPERATIONAL</p>
               </div>
-              <p className="text-body-md font-body-md text-secondary">Systems nominal. Monitoring {activeTrips} active trips.</p>
+              <p className="text-body-md font-body-md text-secondary">
+                Monitoring {activeTrips} active trip{activeTrips !== 1 ? 's' : ''}, {availableVehicles} vehicle{availableVehicles !== 1 ? 's' : ''} available.
+              </p>
             </div>
           </div>
         </div>

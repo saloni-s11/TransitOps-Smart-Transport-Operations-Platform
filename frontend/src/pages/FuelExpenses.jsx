@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { ProtectedAction } from '../components/common/ProtectedAction';
+import { PERMISSIONS } from '../lib/permissions';
 
 // helpers
 function fmtDate(iso) {
@@ -259,12 +261,16 @@ export default function FuelExpenses() {
             <p className="text-body-md text-secondary mt-1">Monitor operational spending and fuel efficiency across the fleet.</p>
           </div>
           <div className="flex gap-3">
-            <button onClick={() => setShowLogFuel(true)} className="bg-primary-container text-on-primary-container px-6 py-2.5 font-bold rounded hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
-              <span className="material-symbols-outlined">local_gas_station</span>Log Fuel
-            </button>
-            <button onClick={() => setShowAddExpense(true)} className="bg-primary-container text-on-primary-container px-6 py-2.5 font-bold rounded hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
-              <span className="material-symbols-outlined">add_card</span>Add Expense
-            </button>
+            <ProtectedAction permission={PERMISSIONS.ADD_FUEL_LOG} mode="tooltip">
+              <button onClick={() => setShowLogFuel(true)} className="bg-primary-container text-on-primary-container px-6 py-2.5 font-bold rounded hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+                <span className="material-symbols-outlined">local_gas_station</span>Log Fuel
+              </button>
+            </ProtectedAction>
+            <ProtectedAction permission={PERMISSIONS.ADD_EXPENSE} mode="tooltip">
+              <button onClick={() => setShowAddExpense(true)} className="bg-primary-container text-on-primary-container px-6 py-2.5 font-bold rounded hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+                <span className="material-symbols-outlined">add_card</span>Add Expense
+              </button>
+            </ProtectedAction>
           </div>
         </div>
 

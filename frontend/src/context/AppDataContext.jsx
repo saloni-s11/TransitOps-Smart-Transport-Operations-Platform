@@ -57,7 +57,7 @@ export function AppDataProvider({ children }) {
       odometerKm: v.odometer_km,
       acquisitionCost: v.acquisition_cost,
       status: v.status,
-      region: v.region ?? "Region K",
+      region: "Region K", // Legacy field for compatibility
     };
   }
 
@@ -136,7 +136,7 @@ export function AppDataProvider({ children }) {
       odometer_km: vehicle.odometerKm ?? 0,
       acquisition_cost: vehicle.acquisitionCost ?? 0,
       status: "Available",
-      region: vehicle.region ?? "Region K",
+      region: vehicle.region ?? "Region K", // Legacy field
     }]).select().single();
     if (!error && data) setVehicles((prev) => [normalizeVehicle(data), ...prev]);
     return { ok: !error, error };

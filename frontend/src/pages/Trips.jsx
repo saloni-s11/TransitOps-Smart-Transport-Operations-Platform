@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { useAppData } from "../context/AppDataContext";
+import { ProtectedAction } from "../components/common/ProtectedAction";
+import { usePermissions } from "../hooks/usePermissions";
+import { PERMISSIONS } from "../lib/permissions";
 
 export default function Trips() {
   const { vehicles, drivers, trips, dispatchTrip, completeTrip, cancelTrip } = useAppData();
+  const { can } = usePermissions();
 
   const [source, setSource] = useState("Gandhinagar Depot");
   const [destination, setDestination] = useState("Ahmedabad Hub");
@@ -125,11 +129,17 @@ export default function Trips() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Create Trip Form (Left Column) */}
           <section className="lg:col-span-7 bg-white border border-outline-variant rounded-lg overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-outline-variant">
+            <div className="p-6 border-b border-outline-variant flex items-center justify-between">
               <h2 className="text-headline-md font-bold text-on-surface">Create Trip</h2>
+              {!can(PERMISSIONS.CREATE_TRIP) && (
+                <span className="flex items-center gap-1.5 text-secondary text-body-sm bg-surface-container px-3 py-1.5 rounded-full border border-outline-variant">
+                  <span className="material-symbols-outlined text-[16px]">lock</span>
+                  View only
+                </span>
+              )}
             </div>
             <div className="p-6 flex-1 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${!can(PERMISSIONS.CREATE_TRIP) ? 'pointer-events-none opacity-60' : ''}`}>
                 {/* Source */}
                 <div className="flex flex-col gap-2">
                   <label className="text-body-md font-semibold text-secondary">SOURCE</label>
@@ -242,13 +252,15 @@ export default function Trips() {
                 className="px-6 py-2.5 border border-outline text-on-surface font-semibold rounded hover:bg-surface-container transition-all">
                 Clear
               </button>
-              <button 
-                onClick={handleDispatch}
-                disabled={capacityExceeded || !vehicleId || !driverId || !cargoWeightKg || !plannedDistanceKm}
-                className="px-10 py-2.5 bg-primary text-white font-bold rounded shadow-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
-              >
-                Dispatch
-              </button>
+              <ProtectedAction permission={PERMISSIONS.DISPATCH_TRIP} mode="tooltip">
+                <button 
+                  onClick={handleDispatch}
+                  disabled={capacityExceeded || !vehicleId || !driverId || !cargoWeightKg || !plannedDistanceKm}
+                  className="px-10 py-2.5 bg-primary text-white font-bold rounded shadow-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+                >
+                  Dispatch
+                </button>
+              </ProtectedAction>
             </div>
           </section>
           
@@ -299,12 +311,16 @@ export default function Trips() {
                           <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                             {trip.status === "Dispatched" && (
                               <>
-                                <button onClick={() => completeTrip(trip.id)} className="w-8 h-8 flex items-center justify-center rounded-full bg-green-100 text-green-700 hover:bg-green-200" title="Complete Trip">
-                                  <span className="material-symbols-outlined text-[18px]">check</span>
-                                </button>
-                                <button onClick={() => cancelTrip(trip.id)} className="w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-700 hover:bg-red-200" title="Cancel Trip">
-                                  <span className="material-symbols-outlined text-[18px]">close</span>
-                                </button>
+                                <ProtectedAction permission={PERMISSIONS.COMPLETE_TRIP} mode="tooltip">
+                                  <button onClick={(e) => { e.stopPropagation(); completeTrip(trip.id); }} className="w-8 h-8 flex items-center justify-center rounded-full bg-green-100 text-green-700 hover:bg-green-200" title="Complete Trip">
+                                    <span className="material-symbols-outlined text-[18px]">check</span>
+                                  </button>
+                                </ProtectedAction>
+                                <ProtectedAction permission={PERMISSIONS.CANCEL_TRIP} mode="tooltip">
+                                  <button onClick={(e) => { e.stopPropagation(); cancelTrip(trip.id); }} className="w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-700 hover:bg-red-200" title="Cancel Trip">
+                                    <span className="material-symbols-outlined text-[18px]">close</span>
+                                  </button>
+                                </ProtectedAction>
                               </>
                             )}
                           </div>
