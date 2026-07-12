@@ -1,25 +1,29 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppData } from "../context/AppDataContext";
-import { roles } from "../data/mockData";
+
+const ROLES = ["Fleet Manager", "Dispatcher", "Safety Officer", "Financial Analyst"];
 
 export default function Login() {
   const navigate = useNavigate();
   const { signIn } = useAppData();
   const [email, setEmail] = useState("manager@transitops.io");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("demo1234");
   const [role, setRole] = useState("Fleet Manager");
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
       setError("Please enter both email and password.");
       return;
     }
     setError("");
-    signIn(role);
+    setLoading(true);
+    await signIn(role, email, password);
+    setLoading(false);
     navigate("/dashboard");
   };
 
@@ -46,7 +50,7 @@ export default function Login() {
                 One login, four roles:
               </h2>
               <ul className="space-y-4">
-                {roles.map((r) => (
+                {ROLES.map((r) => (
                   <li key={r} className="flex items-center gap-3 font-body-md text-body-md">
                     <span className="material-symbols-outlined text-primary-container text-sm">fiber_manual_record</span>
                     {r}
@@ -105,7 +109,7 @@ export default function Login() {
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                   >
-                    {roles.map((r) => (
+                    {ROLES.map((r) => (
                       <option key={r}>{r}</option>
                     ))}
                   </select>
@@ -142,9 +146,12 @@ export default function Login() {
               </div>
               <button
                 type="submit"
-                className="w-full bg-primary-container text-on-primary-fixed font-bold py-4 rounded-lg hover:brightness-95 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2"
+                disabled={loading}
+                className="w-full bg-primary-container text-on-primary-fixed font-bold py-4 rounded-lg hover:brightness-95 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-60"
               >
-                Sign In
+                {loading ? (
+                  <><span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span> Signing in...</>
+                ) : "Sign In"}
               </button>
             </form>
             <div className="mt-12 p-6 bg-surface-container-low rounded-xl border border-outline-variant/30">
