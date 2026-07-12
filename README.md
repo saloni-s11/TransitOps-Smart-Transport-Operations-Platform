@@ -53,19 +53,19 @@ A full-stack fleet management system built for transport depots to manage vehicl
 
 | Module | Fleet Manager | Dispatcher | Safety Officer | Financial Analyst |
 |---|:---:|:---:|:---:|:---:|
-| Vehicles (view) | ✅ | — | ✅ | — |
-| Vehicles (add/edit) | ✅ | — | — | — |
-| Drivers (view) | ✅ | — | ✅ | — |
-| Drivers (add/edit) | ✅ | — | — | — |
-| Trips (view) | ✅ | ✅ | ✅ | — |
-| Trips (dispatch/complete/cancel) | ✅ | ✅ | — | — |
-| Maintenance (view) | ✅ | — | ✅ | — |
-| Maintenance (log/complete) | ✅ | — | — | — |
-| Fuel & Expenses | ✅ | — | — | ✅ |
-| Reports & Export | ✅ | — | — | ✅ |
+| Fleet — view | ✅ | 👁 view | — | 👁 view |
+| Fleet — add / edit | ✅ | — | — | — |
+| Drivers — view | ✅ | — | ✅ | — |
+| Drivers — add / edit | ✅ | — | ✅ | — |
+| Trips — view | — | ✅ | 👁 view | — |
+| Trips — dispatch / complete / cancel | — | ✅ | — | — |
+| Fuel & Expenses | — | — | — | ✅ |
+| Analytics & Reports | ✅ | — | — | ✅ |
 | Settings | ✅ | — | — | — |
 
-Each role also has a default landing page — Dispatchers land on `/trips`, Safety Officers on `/vehicles`, Financial Analysts on `/fuel-expenses`.
+**Legend:** ✅ full access &nbsp;·&nbsp; 👁 view only &nbsp;·&nbsp; — no access
+
+Default landing pages after login — Fleet Manager → `/vehicles`, Dispatcher → `/trips`, Safety Officer → `/drivers`, Financial Analyst → `/fuel-expenses`.
 
 ---
 
