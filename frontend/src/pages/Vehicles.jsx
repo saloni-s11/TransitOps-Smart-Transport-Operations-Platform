@@ -68,7 +68,7 @@ export default function Vehicles() {
 <h1 className="text-display font-display text-on-surface">Vehicle Registry</h1>
 <p className="text-body-md text-secondary mt-1">Manage and monitor your entire operational fleet assets.</p>
 </div>
-<ProtectedAction permission={PERMISSIONS.ADD_VEHICLE} mode="hide">
+        <ProtectedAction permission={PERMISSIONS.MANAGE_VEHICLES} mode="hide">
   <Link to="/vehicles/add" className="bg-primary-container text-on-primary-container px-6 py-2.5 rounded shadow-sm hover:opacity-90 active:scale-95 transition-all font-bold flex items-center gap-2">
     <span className="material-symbols-outlined">add_circle</span>
     Add Vehicle
@@ -165,7 +165,7 @@ export default function Vehicles() {
   <span className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase ${getStatusBadgeStyle(vehicle.status)}`}>{vehicle.status}</span>
   </td>
   <td className="px-4 py-4 text-center relative action-menu-container">
-  <ProtectedAction permission={PERMISSIONS.EDIT_VEHICLE} mode="tooltip">
+  <ProtectedAction permission={PERMISSIONS.MANAGE_VEHICLES} mode="tooltip">
     <button 
       onClick={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();

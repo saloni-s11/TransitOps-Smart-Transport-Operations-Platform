@@ -1,5 +1,5 @@
 // TransitOps Role-Based Access Control (RBAC) System
-// Defines permissions for each role across all modules
+// Simplified implementation based on official requirements
 
 export const ROLES = {
   FLEET_MANAGER: 'Fleet Manager',
@@ -9,105 +9,56 @@ export const ROLES = {
 };
 
 export const PERMISSIONS = {
-  // Vehicle Management
+  // Module-level access (simplified)
+  MANAGE_VEHICLES: 'manage_vehicles',
   VIEW_VEHICLES: 'view_vehicles',
-  ADD_VEHICLE: 'add_vehicle',
-  EDIT_VEHICLE: 'edit_vehicle',
-  DELETE_VEHICLE: 'delete_vehicle',
-
-  // Driver Management
+  
+  MANAGE_DRIVERS: 'manage_drivers',
   VIEW_DRIVERS: 'view_drivers',
-  ADD_DRIVER: 'add_driver',
-  EDIT_DRIVER: 'edit_driver',
-  DELETE_DRIVER: 'delete_driver',
-
-  // Trip Management
+  
+  MANAGE_TRIPS: 'manage_trips',
   VIEW_TRIPS: 'view_trips',
-  CREATE_TRIP: 'create_trip',
-  DISPATCH_TRIP: 'dispatch_trip',
-  COMPLETE_TRIP: 'complete_trip',
-  CANCEL_TRIP: 'cancel_trip',
-
-  // Maintenance
+  
+  MANAGE_MAINTENANCE: 'manage_maintenance',
   VIEW_MAINTENANCE: 'view_maintenance',
-  ADD_MAINTENANCE: 'add_maintenance',
-  COMPLETE_MAINTENANCE: 'complete_maintenance',
-
-  // Fuel & Expenses
+  
+  MANAGE_FUEL_EXPENSES: 'manage_fuel_expenses',
   VIEW_FUEL_EXPENSES: 'view_fuel_expenses',
-  ADD_FUEL_LOG: 'add_fuel_log',
-  EDIT_FUEL_LOG: 'edit_fuel_log',
-  ADD_EXPENSE: 'add_expense',
-  EDIT_EXPENSE: 'edit_expense',
-
-  // Analytics & Reports
-  VIEW_ANALYTICS: 'view_analytics',
+  
   VIEW_REPORTS: 'view_reports',
-  EXPORT_REPORTS: 'export_reports',
-
-  // Settings
-  VIEW_SETTINGS: 'view_settings',
-  EDIT_SETTINGS: 'edit_settings',
+  MANAGE_SETTINGS: 'manage_settings',
 };
 
-// Role Permission Matrix
+// Role Permission Matrix (Simplified per document)
 const ROLE_PERMISSIONS = {
+  // Fleet Manager: Oversees fleet assets, maintenance, vehicle lifecycle, and operational efficiency
   [ROLES.FLEET_MANAGER]: [
-    // Fleet: full access
-    PERMISSIONS.VIEW_VEHICLES,
-    PERMISSIONS.ADD_VEHICLE,
-    PERMISSIONS.EDIT_VEHICLE,
-    PERMISSIONS.DELETE_VEHICLE,
-    // Drivers: full access
+    PERMISSIONS.MANAGE_VEHICLES,
+    PERMISSIONS.MANAGE_MAINTENANCE,
     PERMISSIONS.VIEW_DRIVERS,
-    PERMISSIONS.ADD_DRIVER,
-    PERMISSIONS.EDIT_DRIVER,
-    PERMISSIONS.DELETE_DRIVER,
-    // Trips: NO access per RBAC matrix
-    // Fuel/Expenses: NO access per RBAC matrix
-    // Analytics: full access
-    PERMISSIONS.VIEW_ANALYTICS,
     PERMISSIONS.VIEW_REPORTS,
-    PERMISSIONS.EXPORT_REPORTS,
-    // Settings: full access
-    PERMISSIONS.VIEW_SETTINGS,
-    PERMISSIONS.EDIT_SETTINGS,
+    PERMISSIONS.MANAGE_SETTINGS,
   ],
 
+  // Dispatcher: Creates trips, assigns vehicles and drivers, and monitors active deliveries
   [ROLES.DISPATCHER]: [
-    // Fleet: view only
     PERMISSIONS.VIEW_VEHICLES,
-    // Trips: full access
-    PERMISSIONS.VIEW_TRIPS,
-    PERMISSIONS.CREATE_TRIP,
-    PERMISSIONS.DISPATCH_TRIP,
-    PERMISSIONS.COMPLETE_TRIP,
-    PERMISSIONS.CANCEL_TRIP,
-  ],
-
-  [ROLES.SAFETY_OFFICER]: [
-    // Drivers: full access
     PERMISSIONS.VIEW_DRIVERS,
-    PERMISSIONS.ADD_DRIVER,
-    PERMISSIONS.EDIT_DRIVER,
-    PERMISSIONS.DELETE_DRIVER,
-    // Trips: view only
-    PERMISSIONS.VIEW_TRIPS,
+    PERMISSIONS.MANAGE_TRIPS,
   ],
 
-  [ROLES.FINANCIAL_ANALYST]: [
-    // Fleet: view only
+  // Safety Officer: Ensures driver compliance, tracks license validity, and monitors safety scores
+  [ROLES.SAFETY_OFFICER]: [
+    PERMISSIONS.MANAGE_DRIVERS,
+    PERMISSIONS.VIEW_TRIPS,
     PERMISSIONS.VIEW_VEHICLES,
-    // Fuel & Expenses: full access
-    PERMISSIONS.VIEW_FUEL_EXPENSES,
-    PERMISSIONS.ADD_FUEL_LOG,
-    PERMISSIONS.EDIT_FUEL_LOG,
-    PERMISSIONS.ADD_EXPENSE,
-    PERMISSIONS.EDIT_EXPENSE,
-    // Analytics: full access
-    PERMISSIONS.VIEW_ANALYTICS,
+  ],
+
+  // Financial Analyst: Reviews operational expenses, fuel consumption, maintenance costs, and profitability
+  [ROLES.FINANCIAL_ANALYST]: [
+    PERMISSIONS.VIEW_VEHICLES,
+    PERMISSIONS.MANAGE_FUEL_EXPENSES,
     PERMISSIONS.VIEW_REPORTS,
-    PERMISSIONS.EXPORT_REPORTS,
   ],
 };
 
@@ -143,7 +94,6 @@ export function getRolePermissions(role) {
 
 /**
  * Returns the default redirect path for a given role.
- * Used by route guards when a user tries to access a page they can't access.
  */
 export function getDefaultRoute(role) {
   switch (role) {
@@ -157,24 +107,23 @@ export function getDefaultRoute(role) {
 
 /**
  * Maps each route to the permission(s) required to access it.
- * Returns true if no specific permission is required.
  */
 export function canAccessRoute(role, route) {
   const routePermissions = {
-    '/dashboard':      [PERMISSIONS.VIEW_VEHICLES, PERMISSIONS.VIEW_DRIVERS, PERMISSIONS.VIEW_TRIPS, PERMISSIONS.VIEW_FUEL_EXPENSES],
-    '/vehicles':       [PERMISSIONS.VIEW_VEHICLES],
-    '/vehicles/add':   [PERMISSIONS.ADD_VEHICLE],
-    '/drivers':        [PERMISSIONS.VIEW_DRIVERS],
-    '/drivers/add':    [PERMISSIONS.ADD_DRIVER],
-    '/trips':          [PERMISSIONS.VIEW_TRIPS],
-    '/maintenance':    [PERMISSIONS.VIEW_VEHICLES, PERMISSIONS.VIEW_DRIVERS], // accessible to fleet/dispatcher
-    '/fuel-expenses':  [PERMISSIONS.VIEW_FUEL_EXPENSES],
+    '/dashboard':      [PERMISSIONS.MANAGE_VEHICLES, PERMISSIONS.VIEW_VEHICLES, PERMISSIONS.MANAGE_TRIPS, PERMISSIONS.MANAGE_FUEL_EXPENSES],
+    '/vehicles':       [PERMISSIONS.MANAGE_VEHICLES, PERMISSIONS.VIEW_VEHICLES],
+    '/vehicles/add':   [PERMISSIONS.MANAGE_VEHICLES],
+    '/drivers':        [PERMISSIONS.MANAGE_DRIVERS, PERMISSIONS.VIEW_DRIVERS],
+    '/drivers/add':    [PERMISSIONS.MANAGE_DRIVERS],
+    '/trips':          [PERMISSIONS.MANAGE_TRIPS, PERMISSIONS.VIEW_TRIPS],
+    '/maintenance':    [PERMISSIONS.MANAGE_MAINTENANCE, PERMISSIONS.VIEW_MAINTENANCE],
+    '/fuel-expenses':  [PERMISSIONS.MANAGE_FUEL_EXPENSES, PERMISSIONS.VIEW_FUEL_EXPENSES],
     '/reports':        [PERMISSIONS.VIEW_REPORTS],
-    '/settings':       [PERMISSIONS.VIEW_SETTINGS],
+    '/settings':       [PERMISSIONS.MANAGE_SETTINGS],
   };
 
   const requiredPermissions = routePermissions[route];
-  if (!requiredPermissions) return true;
+  if (!requiredPermissions) return true; // Support page, etc
   return hasAnyPermission(role, requiredPermissions);
 }
 
@@ -183,11 +132,11 @@ export function canAccessRoute(role, route) {
  */
 export function getUnauthorizedMessage(role, action) {
   const messages = {
-    [ROLES.FLEET_MANAGER]:     'Fleet Managers can manage fleet, drivers, and analytics. Contact your administrator for other operations.',
-    [ROLES.DISPATCHER]:        'Dispatchers can view fleet and manage trips. Contact your Fleet Manager for other operations.',
-    [ROLES.SAFETY_OFFICER]:    'Safety Officers can manage drivers and view trips. Contact your Fleet Manager to make other changes.',
-    [ROLES.FINANCIAL_ANALYST]: 'Financial Analysts can view fleet and manage fuel logs, expenses, and analytics. Contact your Fleet Manager for other operations.',
+    [ROLES.FLEET_MANAGER]:     'Fleet Managers oversee fleet assets, maintenance, vehicle lifecycle, and operational efficiency.',
+    [ROLES.DISPATCHER]:        'Dispatchers create trips, assign vehicles and drivers, and monitor active deliveries.',
+    [ROLES.SAFETY_OFFICER]:    'Safety Officers ensure driver compliance, track license validity, and monitor safety scores.',
+    [ROLES.FINANCIAL_ANALYST]: 'Financial Analysts review operational expenses, fuel consumption, maintenance costs, and profitability.',
   };
 
-  return messages[role] || 'You do not have permission to perform this action. Contact your administrator.';
+  return messages[role] || 'You do not have permission to perform this action.';
 }

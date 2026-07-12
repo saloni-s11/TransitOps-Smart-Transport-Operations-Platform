@@ -216,7 +216,7 @@ export default function Reports() {
 <span className="material-symbols-outlined text-[18px]">calendar_today</span>
                     Last 30 Days
                 </button>
-<ProtectedAction permission={PERMISSIONS.EXPORT_REPORTS} mode="tooltip">
+<ProtectedAction permission={PERMISSIONS.VIEW_REPORTS} mode="tooltip">
   <button 
     onClick={() => {
       alert('Generating PDF report...\n\nThis feature will export:\n• Monthly revenue chart\n• KPI summary\n• Fleet utilization stats\n• Top costliest vehicles');

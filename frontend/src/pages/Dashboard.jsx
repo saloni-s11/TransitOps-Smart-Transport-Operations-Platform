@@ -70,7 +70,7 @@ export default function Dashboard() {
               <option>Maintenance</option>
             </select>
           </div>
-          <ProtectedAction permission={PERMISSIONS.CREATE_TRIP} mode="hide">
+          <ProtectedAction permission={PERMISSIONS.MANAGE_TRIPS} mode="hide">
             <button
               onClick={() => navigate('/trips')}
               className="ml-auto flex items-center gap-2 bg-primary text-white px-6 py-2 rounded-lg font-bold text-body-md hover:bg-opacity-90 transition-all active:scale-95 shadow-lg">
