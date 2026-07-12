@@ -89,40 +89,74 @@ export default function Settings() {
 <tbody className="divide-y divide-outline-variant">
 <tr className="hover:bg-[#FFFBEB] transition-colors group">
 <td className="px-6 py-5 font-table-data text-table-data text-on-surface font-semibold">Fleet Manager</td>
+{/* Fleet: full ✓ */}
 <td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-primary" style={{fontVariationSettings: '\'FILL\' 1'}}>check_circle</span></td>
+{/* Drivers: full ✓ */}
 <td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-primary" style={{fontVariationSettings: '\'FILL\' 1'}}>check_circle</span></td>
-<td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-primary" style={{fontVariationSettings: '\'FILL\' 1'}}>check_circle</span></td>
-<td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-primary" style={{fontVariationSettings: '\'FILL\' 1'}}>check_circle</span></td>
+{/* Trips: — */}
+<td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
+{/* Fuel/Exp: — */}
+<td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
+{/* Analytics: ✓ */}
 <td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-primary" style={{fontVariationSettings: '\'FILL\' 1'}}>check_circle</span></td>
 </tr>
 <tr className="hover:bg-[#FFFBEB] transition-colors group">
 <td className="px-6 py-5 font-table-data text-table-data text-on-surface font-semibold">Dispatcher</td>
+{/* Fleet: view */}
+<td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-amber-500" style={{fontVariationSettings: '\'FILL\' 1'}}>visibility</span></td>
+{/* Drivers: — */}
 <td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
-<td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
+{/* Trips: full ✓ */}
 <td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-primary" style={{fontVariationSettings: '\'FILL\' 1'}}>check_circle</span></td>
+{/* Fuel/Exp: — */}
 <td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
+{/* Analytics: — */}
 <td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
 </tr>
 <tr className="hover:bg-[#FFFBEB] transition-colors group">
 <td className="px-6 py-5 font-table-data text-table-data text-on-surface font-semibold">Safety Officer</td>
-<td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-primary" style={{fontVariationSettings: '\'FILL\' 1'}}>visibility</span></td>
+{/* Fleet: — */}
 <td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
+{/* Drivers: full ✓ */}
+<td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-primary" style={{fontVariationSettings: '\'FILL\' 1'}}>check_circle</span></td>
+{/* Trips: view */}
+<td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-amber-500" style={{fontVariationSettings: '\'FILL\' 1'}}>visibility</span></td>
+{/* Fuel/Exp: — */}
 <td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
-<td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
+{/* Analytics: — */}
 <td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
 </tr>
 <tr className="hover:bg-[#FFFBEB] transition-colors group">
 <td className="px-6 py-5 font-table-data text-table-data text-on-surface font-semibold">Financial Analyst</td>
+{/* Fleet: view */}
+<td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-amber-500" style={{fontVariationSettings: '\'FILL\' 1'}}>visibility</span></td>
+{/* Drivers: — */}
 <td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
+{/* Trips: — */}
 <td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
-<td className="px-6 py-5 text-center text-secondary opacity-30"><span className="material-symbols-outlined">remove_circle_outline</span></td>
+{/* Fuel/Exp: full ✓ */}
 <td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-primary" style={{fontVariationSettings: '\'FILL\' 1'}}>check_circle</span></td>
+{/* Analytics: ✓ */}
 <td className="px-6 py-5 text-center"><span className="material-symbols-outlined text-primary" style={{fontVariationSettings: '\'FILL\' 1'}}>check_circle</span></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div className="p-6 bg-surface-container-low border-t border-outline-variant">
+<div className="flex flex-wrap items-center gap-6 mb-3">
+  <div className="flex items-center gap-2">
+    <span className="material-symbols-outlined text-primary text-[18px]" style={{fontVariationSettings: '\'FILL\' 1'}}>check_circle</span>
+    <span className="text-body-sm text-secondary">Full access</span>
+  </div>
+  <div className="flex items-center gap-2">
+    <span className="material-symbols-outlined text-amber-500 text-[18px]" style={{fontVariationSettings: '\'FILL\' 1'}}>visibility</span>
+    <span className="text-body-sm text-secondary">View only</span>
+  </div>
+  <div className="flex items-center gap-2">
+    <span className="material-symbols-outlined text-secondary opacity-30 text-[18px]">remove_circle_outline</span>
+    <span className="text-body-sm text-secondary">No access</span>
+  </div>
+</div>
 <p className="text-body-md text-secondary italic">Note: Only Root Administrators can modify these role definitions. Contact TransitOps Enterprise Support for custom roles.</p>
 </div>
 </div>

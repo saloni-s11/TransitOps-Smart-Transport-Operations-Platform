@@ -53,37 +53,31 @@ export const PERMISSIONS = {
 // Role Permission Matrix
 const ROLE_PERMISSIONS = {
   [ROLES.FLEET_MANAGER]: [
-    // Full access to everything
+    // Fleet: full access
     PERMISSIONS.VIEW_VEHICLES,
     PERMISSIONS.ADD_VEHICLE,
     PERMISSIONS.EDIT_VEHICLE,
     PERMISSIONS.DELETE_VEHICLE,
+    // Drivers: full access
     PERMISSIONS.VIEW_DRIVERS,
     PERMISSIONS.ADD_DRIVER,
     PERMISSIONS.EDIT_DRIVER,
     PERMISSIONS.DELETE_DRIVER,
-    PERMISSIONS.VIEW_TRIPS,
-    PERMISSIONS.CREATE_TRIP,
-    PERMISSIONS.DISPATCH_TRIP,
-    PERMISSIONS.COMPLETE_TRIP,
-    PERMISSIONS.CANCEL_TRIP,
-    PERMISSIONS.VIEW_MAINTENANCE,
-    PERMISSIONS.ADD_MAINTENANCE,
-    PERMISSIONS.COMPLETE_MAINTENANCE,
-    PERMISSIONS.VIEW_FUEL_EXPENSES,
-    PERMISSIONS.ADD_FUEL_LOG,
-    PERMISSIONS.EDIT_FUEL_LOG,
-    PERMISSIONS.ADD_EXPENSE,
-    PERMISSIONS.EDIT_EXPENSE,
+    // Trips: NO access per RBAC matrix
+    // Fuel/Expenses: NO access per RBAC matrix
+    // Analytics: full access
     PERMISSIONS.VIEW_ANALYTICS,
     PERMISSIONS.VIEW_REPORTS,
     PERMISSIONS.EXPORT_REPORTS,
+    // Settings: full access
     PERMISSIONS.VIEW_SETTINGS,
     PERMISSIONS.EDIT_SETTINGS,
   ],
 
   [ROLES.DISPATCHER]: [
-    // Trip management + dashboard
+    // Fleet: view only
+    PERMISSIONS.VIEW_VEHICLES,
+    // Trips: full access
     PERMISSIONS.VIEW_TRIPS,
     PERMISSIONS.CREATE_TRIP,
     PERMISSIONS.DISPATCH_TRIP,
@@ -92,20 +86,25 @@ const ROLE_PERMISSIONS = {
   ],
 
   [ROLES.SAFETY_OFFICER]: [
-    // View-only access to fleet, drivers, trips, maintenance
-    PERMISSIONS.VIEW_VEHICLES,
+    // Drivers: full access
     PERMISSIONS.VIEW_DRIVERS,
+    PERMISSIONS.ADD_DRIVER,
+    PERMISSIONS.EDIT_DRIVER,
+    PERMISSIONS.DELETE_DRIVER,
+    // Trips: view only
     PERMISSIONS.VIEW_TRIPS,
-    PERMISSIONS.VIEW_MAINTENANCE,
   ],
 
   [ROLES.FINANCIAL_ANALYST]: [
-    // Financial data and analytics
+    // Fleet: view only
+    PERMISSIONS.VIEW_VEHICLES,
+    // Fuel & Expenses: full access
     PERMISSIONS.VIEW_FUEL_EXPENSES,
     PERMISSIONS.ADD_FUEL_LOG,
     PERMISSIONS.EDIT_FUEL_LOG,
     PERMISSIONS.ADD_EXPENSE,
     PERMISSIONS.EDIT_EXPENSE,
+    // Analytics: full access
     PERMISSIONS.VIEW_ANALYTICS,
     PERMISSIONS.VIEW_REPORTS,
     PERMISSIONS.EXPORT_REPORTS,
@@ -148,11 +147,11 @@ export function getRolePermissions(role) {
  */
 export function getDefaultRoute(role) {
   switch (role) {
-    case ROLES.FLEET_MANAGER:   return '/dashboard';
-    case ROLES.DISPATCHER:      return '/trips';
-    case ROLES.SAFETY_OFFICER:  return '/vehicles';
+    case ROLES.FLEET_MANAGER:     return '/vehicles';
+    case ROLES.DISPATCHER:        return '/trips';
+    case ROLES.SAFETY_OFFICER:    return '/drivers';
     case ROLES.FINANCIAL_ANALYST: return '/fuel-expenses';
-    default:                    return '/login';
+    default:                      return '/login';
   }
 }
 
@@ -162,12 +161,12 @@ export function getDefaultRoute(role) {
  */
 export function canAccessRoute(role, route) {
   const routePermissions = {
-    '/dashboard':      [PERMISSIONS.VIEW_TRIPS, PERMISSIONS.VIEW_VEHICLES, PERMISSIONS.VIEW_DRIVERS],
+    '/dashboard':      [PERMISSIONS.VIEW_VEHICLES, PERMISSIONS.VIEW_DRIVERS, PERMISSIONS.VIEW_TRIPS, PERMISSIONS.VIEW_FUEL_EXPENSES],
     '/vehicles':       [PERMISSIONS.VIEW_VEHICLES],
     '/vehicles/add':   [PERMISSIONS.ADD_VEHICLE],
     '/drivers':        [PERMISSIONS.VIEW_DRIVERS],
     '/trips':          [PERMISSIONS.VIEW_TRIPS],
-    '/maintenance':    [PERMISSIONS.VIEW_MAINTENANCE],
+    '/maintenance':    [PERMISSIONS.VIEW_VEHICLES, PERMISSIONS.VIEW_DRIVERS], // accessible to fleet/dispatcher
     '/fuel-expenses':  [PERMISSIONS.VIEW_FUEL_EXPENSES],
     '/reports':        [PERMISSIONS.VIEW_REPORTS],
     '/settings':       [PERMISSIONS.VIEW_SETTINGS],
@@ -183,9 +182,10 @@ export function canAccessRoute(role, route) {
  */
 export function getUnauthorizedMessage(role, action) {
   const messages = {
-    [ROLES.DISPATCHER]:        'Dispatchers can only manage trips. Contact your Fleet Manager for other operations.',
-    [ROLES.SAFETY_OFFICER]:    'Safety Officers have view-only access. Contact your Fleet Manager to make changes.',
-    [ROLES.FINANCIAL_ANALYST]: 'Financial Analysts can only manage fuel logs and expenses. Contact your Fleet Manager for other operations.',
+    [ROLES.FLEET_MANAGER]:     'Fleet Managers can manage fleet, drivers, and analytics. Contact your administrator for other operations.',
+    [ROLES.DISPATCHER]:        'Dispatchers can view fleet and manage trips. Contact your Fleet Manager for other operations.',
+    [ROLES.SAFETY_OFFICER]:    'Safety Officers can manage drivers and view trips. Contact your Fleet Manager to make other changes.',
+    [ROLES.FINANCIAL_ANALYST]: 'Financial Analysts can view fleet and manage fuel logs, expenses, and analytics. Contact your Fleet Manager for other operations.',
   };
 
   return messages[role] || 'You do not have permission to perform this action. Contact your administrator.';
