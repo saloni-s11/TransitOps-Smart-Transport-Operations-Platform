@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAppData } from "../context/AppDataContext";
 import { ProtectedAction } from "../components/common/ProtectedAction";
@@ -8,6 +8,7 @@ export default function Vehicles() {
   const { vehicles, updateVehicleStatus } = useAppData();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeActionMenu, setActiveActionMenu] = useState(null);
+  const [menuPosition, setMenuPosition] = useState("bottom");
   const [typeFilter, setTypeFilter] = useState("Type: All");
   const [statusFilter, setStatusFilter] = useState("Status: All");
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,6 +47,17 @@ export default function Vehicles() {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, typeFilter, statusFilter]);
+
+  // Close action menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (activeActionMenu && !e.target.closest('.action-menu-container')) {
+        setActiveActionMenu(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [activeActionMenu]);
 
   return (
     <>
@@ -123,7 +135,7 @@ export default function Vehicles() {
 </div>
 </div>
 {/* Vehicle Table Container */}
-<div className="bg-white border border-outline-variant rounded-sm shadow-sm overflow-hidden mb-6">
+<div className="bg-white border border-outline-variant rounded-sm shadow-sm mb-6">
 <table className="w-full text-left border-collapse">
 <thead>
 <tr className="bg-surface-container-low border-b border-outline-variant">
@@ -152,17 +164,24 @@ export default function Vehicles() {
   <td className="px-4 py-4 text-center">
   <span className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase ${getStatusBadgeStyle(vehicle.status)}`}>{vehicle.status}</span>
   </td>
-  <td className="px-4 py-4 text-center relative">
+  <td className="px-4 py-4 text-center relative action-menu-container">
   <ProtectedAction permission={PERMISSIONS.EDIT_VEHICLE} mode="tooltip">
     <button 
-      onClick={() => setActiveActionMenu(activeActionMenu === vehicle.id ? null : vehicle.id)}
+      onClick={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        setMenuPosition(spaceBelow < 120 ? "top" : "bottom");
+        setActiveActionMenu(activeActionMenu === vehicle.id ? null : vehicle.id);
+      }}
       className="material-symbols-outlined text-secondary hover:text-primary transition-colors"
     >
       more_vert
     </button>
   </ProtectedAction>
   {activeActionMenu === vehicle.id && (
-    <div className="absolute right-8 top-8 w-36 bg-white shadow-lg border border-outline-variant rounded z-10 flex flex-col text-left py-1">
+    <div className={`absolute right-8 w-36 bg-white shadow-lg border border-outline-variant rounded z-50 flex flex-col text-left py-1 ${
+      menuPosition === "top" ? "bottom-8" : "top-8"
+    }`}>
       <button onClick={() => { updateVehicleStatus(vehicle.id, 'Available'); setActiveActionMenu(null); }} className="px-4 py-2 hover:bg-surface-container-low text-sm">Set Available</button>
       <button onClick={() => { updateVehicleStatus(vehicle.id, 'In Shop'); setActiveActionMenu(null); }} className="px-4 py-2 hover:bg-surface-container-low text-sm">Send to Shop</button>
       <button onClick={() => { updateVehicleStatus(vehicle.id, 'Retired'); setActiveActionMenu(null); }} className="px-4 py-2 hover:bg-surface-container-low text-sm text-red-600">Retire</button>

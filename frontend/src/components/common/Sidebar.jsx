@@ -8,7 +8,7 @@ const NAV_ITEMS = [
     to: "/dashboard", 
     label: "Dashboard", 
     icon: "dashboard",
-    permission: PERMISSIONS.VIEW_TRIPS
+    permission: PERMISSIONS.VIEW_VEHICLES
   },
   { 
     to: "/vehicles", 

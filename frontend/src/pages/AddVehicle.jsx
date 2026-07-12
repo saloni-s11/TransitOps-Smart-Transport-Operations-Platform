@@ -15,17 +15,19 @@ export default function AddVehicle() {
     acquisitionCost: "",
     status: "Available"
   });
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === "registrationNo") setError(""); // clear error on edit
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // addVehicle handles id and status if needed, but we pass full object
-    addVehicle({
+    const result = await addVehicle({
       registrationNo: formData.registrationNo,
       model: formData.model,
       type: formData.type,
@@ -36,7 +38,11 @@ export default function AddVehicle() {
       region: "Region K" // default mock region
     });
 
-    navigate("/vehicles");
+    if (result.ok) {
+      navigate("/vehicles");
+    } else {
+      setError(result.error?.message || "Failed to add vehicle. Please try again.");
+    }
   };
 
   return (
@@ -147,13 +153,21 @@ export default function AddVehicle() {
             </div>
           </div>
 
-          <div className="mt-4 flex justify-end">
-            <button 
-              type="submit" 
-              className="bg-primary-container text-on-primary-container px-8 py-3 rounded shadow-sm hover:opacity-90 active:scale-95 transition-all font-bold"
-            >
-              Save Vehicle
-            </button>
+          <div className="mt-4 flex flex-col gap-3">
+            {error && (
+              <div className="flex items-center gap-2 px-4 py-3 bg-error-container text-on-error-container rounded-lg text-body-md">
+                <span className="material-symbols-outlined text-[18px]">error</span>
+                {error}
+              </div>
+            )}
+            <div className="flex justify-end">
+              <button 
+                type="submit" 
+                className="bg-primary-container text-on-primary-container px-8 py-3 rounded shadow-sm hover:opacity-90 active:scale-95 transition-all font-bold"
+              >
+                Save Vehicle
+              </button>
+            </div>
           </div>
         </form>
       </div>

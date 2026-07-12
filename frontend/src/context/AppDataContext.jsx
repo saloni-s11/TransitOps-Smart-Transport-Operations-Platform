@@ -128,6 +128,18 @@ export function AppDataProvider({ children }) {
   // ─── Vehicles ─────────────────────────────────────────────────────────────────
 
   const addVehicle = async (vehicle) => {
+    // Check for duplicate registration number
+    const existingVehicle = vehicles.find(v => 
+      v.registrationNo?.toLowerCase() === vehicle.registrationNo?.toLowerCase()
+    );
+    
+    if (existingVehicle) {
+      return { 
+        ok: false, 
+        error: { message: `Vehicle with registration number ${vehicle.registrationNo} already exists.` }
+      };
+    }
+
     const { data, error } = await supabase.from("vehicles").insert([{
       registration_no: vehicle.registrationNo,
       model: vehicle.model,

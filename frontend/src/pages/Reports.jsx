@@ -161,7 +161,7 @@ export default function Reports() {
         category: type + (type === 'Special' ? '' : 's'),
         activeAssets: categoryVehicles.length,
         efficiency: efficiency + ' km/l',
-        totalCost: '$' + totalCosts.toLocaleString(),
+        totalCost: '₹' + totalCosts.toLocaleString(),
         status: totalCosts > 15000 ? 'High Expense' : 'Optimal'
       };
     }).filter(cat => cat.activeAssets > 0);
@@ -263,7 +263,7 @@ export default function Reports() {
                     </span>
 </div>
 <p className="text-label-caps font-label-caps text-secondary mb-1">Operational Cost</p>
-<h3 className="text-display font-display text-on-surface">${analytics.operationalCost.toLocaleString()}</h3>
+<h3 className="text-display font-display text-on-surface">₹{analytics.operationalCost.toLocaleString()}</h3>
 <div className="absolute bottom-0 left-0 h-1 bg-tertiary w-1/2"></div>
 </div>
 {/* Vehicle ROI */}
@@ -373,7 +373,7 @@ Based on completed trips • ₹15/km base + ₹2/kg cargo + vehicle type premiu
 <div key={vehicle.id}>
 <div className="flex justify-between items-center mb-2">
 <span className="text-label-caps font-label-caps font-bold">{vehicle.registrationDisplay}</span>
-<span className="text-mono-data font-mono-data font-bold">${vehicle.totalCost.toLocaleString()}</span>
+<span className="text-mono-data font-mono-data font-bold">₹{vehicle.totalCost.toLocaleString()}</span>
 </div>
 <div className="h-4 bg-surface-container rounded-full overflow-hidden">
 <div 
