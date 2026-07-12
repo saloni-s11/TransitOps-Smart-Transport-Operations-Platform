@@ -69,160 +69,160 @@ async function seed() {
   const { data: trips, error: tErr } = await supabase
     .from('trips')
     .insert([
-      // January 2026
-      {
-        source: 'Bengaluru DC', destination: 'Mumbai Hub',
-        vehicle_id: vMap['KA-01-AB-1234'], driver_id: dMap['Arjun Mehta'],
-        cargo_weight_kg: 8200, planned_distance_km: 980,
-        status: 'Completed', dispatched_at: '2026-01-08', completed_at: '2026-01-08',
-      },
+      // January 2026 - Low activity (3 trips, smaller cargo)
       {
         source: 'Bengaluru DC', destination: 'Chennai Hub',
         vehicle_id: vMap['KA-04-GH-9900'], driver_id: dMap['Priya Nair'],
-        cargo_weight_kg: 1100, planned_distance_km: 350,
+        cargo_weight_kg: 900, planned_distance_km: 350,
         status: 'Completed', dispatched_at: '2026-01-15', completed_at: '2026-01-15',
       },
       {
         source: 'Mysuru Depot', destination: 'Bengaluru DC',
         vehicle_id: vMap['KA-02-CD-5566'], driver_id: dMap['Sana Sheikh'],
-        cargo_weight_kg: 1350, planned_distance_km: 145,
+        cargo_weight_kg: 1200, planned_distance_km: 145,
         status: 'Completed', dispatched_at: '2026-01-22', completed_at: '2026-01-22',
       },
+      {
+        source: 'Bengaluru DC', destination: 'Coimbatore Hub',
+        vehicle_id: vMap['KA-01-AB-1234'], driver_id: dMap['Arjun Mehta'],
+        cargo_weight_kg: 3500, planned_distance_km: 365,
+        status: 'Completed', dispatched_at: '2026-01-08', completed_at: '2026-01-08',
+      },
 
-      // February 2026
+      // February 2026 - Growing activity (4 trips, moderate cargo)
       {
         source: 'Bengaluru DC', destination: 'Hyderabad Hub',
-        vehicle_id: vMap['KA-07-MN-6677'], driver_id: dMap['Neha Kulkarni'],
-        cargo_weight_kg: 10500, planned_distance_km: 570,
+        vehicle_id: vMap['KA-05-IJ-2233'], driver_id: dMap['Neha Kulkarni'],
+        cargo_weight_kg: 4200, planned_distance_km: 570,
         status: 'Completed', dispatched_at: '2026-02-05', completed_at: '2026-02-05',
-      },
-      {
-        source: 'Bengaluru DC', destination: 'Pune Hub',
-        vehicle_id: vMap['KA-05-IJ-2233'], driver_id: dMap['Arjun Mehta'],
-        cargo_weight_kg: 7200, planned_distance_km: 840,
-        status: 'Completed', dispatched_at: '2026-02-12', completed_at: '2026-02-12',
       },
       {
         source: 'Bengaluru DC', destination: 'Chennai Hub',
         vehicle_id: vMap['KA-01-AB-1234'], driver_id: dMap['Priya Nair'],
-        cargo_weight_kg: 8500, planned_distance_km: 350,
+        cargo_weight_kg: 3800, planned_distance_km: 350,
         status: 'Completed', dispatched_at: '2026-02-18', completed_at: '2026-02-18',
       },
       {
         source: 'Bengaluru DC', destination: 'Coimbatore Hub',
         vehicle_id: vMap['KA-04-GH-9900'], driver_id: dMap['Sana Sheikh'],
-        cargo_weight_kg: 950, planned_distance_km: 365,
+        cargo_weight_kg: 1000, planned_distance_km: 365,
         status: 'Completed', dispatched_at: '2026-02-25', completed_at: '2026-02-25',
-      },
-
-      // March 2026
-      {
-        source: 'Bengaluru DC', destination: 'Mumbai Hub',
-        vehicle_id: vMap['KA-07-MN-6677'], driver_id: dMap['Neha Kulkarni'],
-        cargo_weight_kg: 11200, planned_distance_km: 980,
-        status: 'Completed', dispatched_at: '2026-03-03', completed_at: '2026-03-03',
-      },
-      {
-        source: 'Bengaluru DC', destination: 'Hyderabad Hub',
-        vehicle_id: vMap['KA-05-IJ-2233'], driver_id: dMap['Arjun Mehta'],
-        cargo_weight_kg: 7800, planned_distance_km: 570,
-        status: 'Completed', dispatched_at: '2026-03-10', completed_at: '2026-03-10',
       },
       {
         source: 'Mysuru Depot', destination: 'Bengaluru DC',
-        vehicle_id: vMap['KA-02-CD-5566'], driver_id: dMap['Priya Nair'],
-        cargo_weight_kg: 1400, planned_distance_km: 145,
+        vehicle_id: vMap['KA-02-CD-5566'], driver_id: dMap['Arjun Mehta'],
+        cargo_weight_kg: 1300, planned_distance_km: 145,
+        status: 'Completed', dispatched_at: '2026-02-12', completed_at: '2026-02-12',
+      },
+
+      // March 2026 - Peak activity (4 trips, higher cargo + longer routes)
+      {
+        source: 'Bengaluru DC', destination: 'Pune Hub',
+        vehicle_id: vMap['KA-07-MN-6677'], driver_id: dMap['Arjun Mehta'],
+        cargo_weight_kg: 6500, planned_distance_km: 840,
+        status: 'Completed', dispatched_at: '2026-03-10', completed_at: '2026-03-10',
+      },
+      {
+        source: 'Bengaluru DC', destination: 'Hyderabad Hub',
+        vehicle_id: vMap['KA-05-IJ-2233'], driver_id: dMap['Priya Nair'],
+        cargo_weight_kg: 5200, planned_distance_km: 570,
         status: 'Completed', dispatched_at: '2026-03-17', completed_at: '2026-03-17',
       },
       {
         source: 'Bengaluru DC', destination: 'Chennai Hub',
         vehicle_id: vMap['KA-01-AB-1234'], driver_id: dMap['Sana Sheikh'],
-        cargo_weight_kg: 8100, planned_distance_km: 350,
+        cargo_weight_kg: 5800, planned_distance_km: 350,
         status: 'Completed', dispatched_at: '2026-03-24', completed_at: '2026-03-24',
       },
-
-      // April 2026
       {
-        source: 'Bengaluru DC', destination: 'Pune Hub',
+        source: 'Bengaluru DC', destination: 'Coimbatore Hub',
+        vehicle_id: vMap['KA-04-GH-9900'], driver_id: dMap['Neha Kulkarni'],
+        cargo_weight_kg: 1100, planned_distance_km: 365,
+        status: 'Completed', dispatched_at: '2026-03-03', completed_at: '2026-03-03',
+      },
+
+      // April 2026 - High activity sustained (5 trips, heavy cargo)
+      {
+        source: 'Bengaluru DC', destination: 'Mumbai Hub',
         vehicle_id: vMap['KA-07-MN-6677'], driver_id: dMap['Neha Kulkarni'],
-        cargo_weight_kg: 10800, planned_distance_km: 840,
+        cargo_weight_kg: 7200, planned_distance_km: 980,
         status: 'Completed', dispatched_at: '2026-04-02', completed_at: '2026-04-02',
+      },
+      {
+        source: 'Bengaluru DC', destination: 'Hyderabad Hub',
+        vehicle_id: vMap['KA-05-IJ-2233'], driver_id: dMap['Arjun Mehta'],
+        cargo_weight_kg: 5500, planned_distance_km: 570,
+        status: 'Completed', dispatched_at: '2026-04-15', completed_at: '2026-04-15',
+      },
+      {
+        source: 'Bengaluru DC', destination: 'Chennai Hub',
+        vehicle_id: vMap['KA-01-AB-1234'], driver_id: dMap['Sana Sheikh'],
+        cargo_weight_kg: 6000, planned_distance_km: 350,
+        status: 'Completed', dispatched_at: '2026-04-22', completed_at: '2026-04-22',
       },
       {
         source: 'Bengaluru DC', destination: 'Coimbatore Hub',
         vehicle_id: vMap['KA-04-GH-9900'], driver_id: dMap['Priya Nair'],
-        cargo_weight_kg: 1050, planned_distance_km: 365,
+        cargo_weight_kg: 1100, planned_distance_km: 365,
         status: 'Completed', dispatched_at: '2026-04-08', completed_at: '2026-04-08',
       },
       {
-        source: 'Bengaluru DC', destination: 'Mumbai Hub',
-        vehicle_id: vMap['KA-05-IJ-2233'], driver_id: dMap['Arjun Mehta'],
-        cargo_weight_kg: 7600, planned_distance_km: 980,
-        status: 'Completed', dispatched_at: '2026-04-15', completed_at: '2026-04-15',
-      },
-      {
-        source: 'Bengaluru DC', destination: 'Hyderabad Hub',
-        vehicle_id: vMap['KA-01-AB-1234'], driver_id: dMap['Sana Sheikh'],
-        cargo_weight_kg: 8700, planned_distance_km: 570,
-        status: 'Completed', dispatched_at: '2026-04-22', completed_at: '2026-04-22',
-      },
-      {
-        source: 'Bengaluru DC', destination: 'Chennai Hub',
+        source: 'Mysuru Depot', destination: 'Bengaluru DC',
         vehicle_id: vMap['KA-02-CD-5566'], driver_id: dMap['Neha Kulkarni'],
-        cargo_weight_kg: 1300, planned_distance_km: 350,
+        cargo_weight_kg: 1400, planned_distance_km: 145,
         status: 'Completed', dispatched_at: '2026-04-28', completed_at: '2026-04-28',
       },
 
-      // May 2026
+      // May 2026 - Moderate decline (4 trips, medium cargo)
       {
-        source: 'Bengaluru DC', destination: 'Mumbai Hub',
-        vehicle_id: vMap['KA-07-MN-6677'], driver_id: dMap['Arjun Mehta'],
-        cargo_weight_kg: 11500, planned_distance_km: 980,
-        status: 'Completed', dispatched_at: '2026-05-05', completed_at: '2026-05-05',
-      },
-      {
-        source: 'Bengaluru DC', destination: 'Pune Hub',
+        source: 'Bengaluru DC', destination: 'Hyderabad Hub',
         vehicle_id: vMap['KA-05-IJ-2233'], driver_id: dMap['Priya Nair'],
-        cargo_weight_kg: 7400, planned_distance_km: 840,
+        cargo_weight_kg: 4500, planned_distance_km: 570,
         status: 'Completed', dispatched_at: '2026-05-12', completed_at: '2026-05-12',
       },
       {
         source: 'Bengaluru DC', destination: 'Chennai Hub',
         vehicle_id: vMap['KA-01-AB-1234'], driver_id: dMap['Sana Sheikh'],
-        cargo_weight_kg: 8300, planned_distance_km: 350,
+        cargo_weight_kg: 4800, planned_distance_km: 350,
         status: 'Completed', dispatched_at: '2026-05-18', completed_at: '2026-05-18',
+      },
+      {
+        source: 'Bengaluru DC', destination: 'Pune Hub',
+        vehicle_id: vMap['KA-07-MN-6677'], driver_id: dMap['Arjun Mehta'],
+        cargo_weight_kg: 5500, planned_distance_km: 840,
+        status: 'Completed', dispatched_at: '2026-05-05', completed_at: '2026-05-05',
       },
       {
         source: 'Mysuru Depot', destination: 'Bengaluru DC',
         vehicle_id: vMap['KA-04-GH-9900'], driver_id: dMap['Neha Kulkarni'],
-        cargo_weight_kg: 1150, planned_distance_km: 145,
+        cargo_weight_kg: 1100, planned_distance_km: 145,
         status: 'Completed', dispatched_at: '2026-05-25', completed_at: '2026-05-25',
       },
 
-      // June 2026
+      // June 2026 - Lower activity (4 trips, reduced cargo)
       {
         source: 'Bengaluru DC', destination: 'Hyderabad Hub',
         vehicle_id: vMap['KA-05-IJ-2233'], driver_id: dMap['Neha Kulkarni'],
-        cargo_weight_kg: 6200, planned_distance_km: 570,
+        cargo_weight_kg: 3800, planned_distance_km: 570,
         status: 'Completed', dispatched_at: '2026-06-03', completed_at: '2026-06-03',
       },
       {
         source: 'Bengaluru DC', destination: 'Coimbatore Hub',
         vehicle_id: vMap['KA-02-CD-5566'], driver_id: dMap['Priya Nair'],
-        cargo_weight_kg: 1250, planned_distance_km: 365,
+        cargo_weight_kg: 1200, planned_distance_km: 365,
         status: 'Completed', dispatched_at: '2026-06-09', completed_at: '2026-06-09',
-      },
-      {
-        source: 'Bengaluru DC', destination: 'Mumbai Hub',
-        vehicle_id: vMap['KA-07-MN-6677'], driver_id: dMap['Arjun Mehta'],
-        cargo_weight_kg: 11000, planned_distance_km: 980,
-        status: 'Completed', dispatched_at: '2026-06-15', completed_at: '2026-06-15',
       },
       {
         source: 'Bengaluru DC', destination: 'Chennai Hub',
         vehicle_id: vMap['KA-01-AB-1234'], driver_id: dMap['Sana Sheikh'],
-        cargo_weight_kg: 8600, planned_distance_km: 350,
+        cargo_weight_kg: 4000, planned_distance_km: 350,
         status: 'Completed', dispatched_at: '2026-06-22', completed_at: '2026-06-22',
+      },
+      {
+        source: 'Mysuru Depot', destination: 'Bengaluru DC',
+        vehicle_id: vMap['KA-04-GH-9900'], driver_id: dMap['Arjun Mehta'],
+        cargo_weight_kg: 1050, planned_distance_km: 145,
+        status: 'Completed', dispatched_at: '2026-06-15', completed_at: '2026-06-15',
       },
 
       // July 2026 (current/recent trips)
