@@ -165,6 +165,7 @@ export function canAccessRoute(role, route) {
     '/vehicles':       [PERMISSIONS.VIEW_VEHICLES],
     '/vehicles/add':   [PERMISSIONS.ADD_VEHICLE],
     '/drivers':        [PERMISSIONS.VIEW_DRIVERS],
+    '/drivers/add':    [PERMISSIONS.ADD_DRIVER],
     '/trips':          [PERMISSIONS.VIEW_TRIPS],
     '/maintenance':    [PERMISSIONS.VIEW_VEHICLES, PERMISSIONS.VIEW_DRIVERS], // accessible to fleet/dispatcher
     '/fuel-expenses':  [PERMISSIONS.VIEW_FUEL_EXPENSES],

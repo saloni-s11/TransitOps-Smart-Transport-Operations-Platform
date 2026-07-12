@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Vehicles from "./pages/Vehicles";
 import AddVehicle from "./pages/AddVehicle";
 import Drivers from "./pages/Drivers";
+import AddDriver from "./pages/AddDriver";
 import Trips from "./pages/Trips";
 import Maintenance from "./pages/Maintenance";
 import FuelExpenses from "./pages/FuelExpenses";
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="/vehicles"      element={<RequirePermission><Vehicles /></RequirePermission>} />
             <Route path="/vehicles/add"  element={<RequirePermission><AddVehicle /></RequirePermission>} />
             <Route path="/drivers"       element={<RequirePermission><Drivers /></RequirePermission>} />
+            <Route path="/drivers/add"   element={<RequirePermission><AddDriver /></RequirePermission>} />
             <Route path="/trips"         element={<RequirePermission><Trips /></RequirePermission>} />
             <Route path="/maintenance"   element={<RequirePermission><Maintenance /></RequirePermission>} />
             <Route path="/fuel-expenses" element={<RequirePermission><FuelExpenses /></RequirePermission>} />

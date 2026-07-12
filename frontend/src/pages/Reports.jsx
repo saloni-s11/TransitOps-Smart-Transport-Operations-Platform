@@ -210,12 +210,18 @@ export default function Reports() {
 <p className="text-body-md text-secondary">Strategic performance monitoring and ROI analysis.</p>
 </div>
 <div className="flex gap-3">
-<button className="px-4 py-2 border border-outline text-secondary text-label-caps font-label-caps rounded flex items-center gap-2 hover:bg-surface-container-high transition-colors">
+<button 
+  onClick={() => alert('Date range filter coming soon! Currently showing all-time data.')}
+  className="px-4 py-2 border border-outline text-secondary text-label-caps font-label-caps rounded flex items-center gap-2 hover:bg-surface-container-high transition-colors">
 <span className="material-symbols-outlined text-[18px]">calendar_today</span>
                     Last 30 Days
                 </button>
 <ProtectedAction permission={PERMISSIONS.EXPORT_REPORTS} mode="tooltip">
-  <button className="px-4 py-2 bg-primary text-white text-label-caps font-label-caps rounded flex items-center gap-2 hover:opacity-90 transition-all active:scale-95">
+  <button 
+    onClick={() => {
+      alert('Generating PDF report...\n\nThis feature will export:\n• Monthly revenue chart\n• KPI summary\n• Fleet utilization stats\n• Top costliest vehicles');
+    }}
+    className="px-4 py-2 bg-primary text-white text-label-caps font-label-caps rounded flex items-center gap-2 hover:opacity-90 transition-all active:scale-95">
     <span className="material-symbols-outlined text-[18px]">download</span>
                     Export PDF
   </button>

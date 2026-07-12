@@ -42,10 +42,10 @@ export default function Drivers() {
           <p className="text-body-md text-secondary mt-1">Manage personnel, safety compliance, and operational availability.</p>
         </div>
         <ProtectedAction permission={PERMISSIONS.ADD_DRIVER} mode="hide">
-          <button className="bg-primary-container text-on-primary-container font-bold px-6 py-2.5 rounded shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+          <Link to="/drivers/add" className="bg-primary-container text-on-primary-container font-bold px-6 py-2.5 rounded shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
             <span className="material-symbols-outlined">person_add</span>
             Add Driver
-          </button>
+          </Link>
         </ProtectedAction>
       </div>
 
