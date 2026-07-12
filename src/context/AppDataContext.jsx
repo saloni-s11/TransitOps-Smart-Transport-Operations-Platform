@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
   vehicles as seedVehicles,
   drivers as seedDrivers,
@@ -15,14 +15,28 @@ let idCounter = 1000;
 const nextId = (prefix) => `${prefix}-${idCounter++}`;
 
 export function AppDataProvider({ children }) {
-  const [vehicles, setVehicles] = useState(seedVehicles);
-  const [drivers, setDrivers] = useState(seedDrivers);
-  const [trips, setTrips] = useState(seedTrips);
-  const [maintenanceLogs, setMaintenanceLogs] = useState(seedMaintenanceLogs);
-  const [fuelLogs, setFuelLogs] = useState(seedFuelLogs);
-  const [expenses, setExpenses] = useState(seedExpenses);
+  // Initialize from localStorage or fallback to seed data
+  const loadInitialData = (key, seedData) => {
+    const saved = localStorage.getItem(`transitops_${key}`);
+    return saved ? JSON.parse(saved) : seedData;
+  };
+
+  const [vehicles, setVehicles] = useState(() => loadInitialData('vehicles', seedVehicles));
+  const [drivers, setDrivers] = useState(() => loadInitialData('drivers', seedDrivers));
+  const [trips, setTrips] = useState(() => loadInitialData('trips', seedTrips));
+  const [maintenanceLogs, setMaintenanceLogs] = useState(() => loadInitialData('maintenanceLogs', seedMaintenanceLogs));
+  const [fuelLogs, setFuelLogs] = useState(() => loadInitialData('fuelLogs', seedFuelLogs));
+  const [expenses, setExpenses] = useState(() => loadInitialData('expenses', seedExpenses));
   const [user, setUser] = useState(null); // null until "signed in"
   const [role, setRole] = useState(seedUser.role);
+
+  // Persistence hooks
+  useEffect(() => { localStorage.setItem('transitops_vehicles', JSON.stringify(vehicles)); }, [vehicles]);
+  useEffect(() => { localStorage.setItem('transitops_drivers', JSON.stringify(drivers)); }, [drivers]);
+  useEffect(() => { localStorage.setItem('transitops_trips', JSON.stringify(trips)); }, [trips]);
+  useEffect(() => { localStorage.setItem('transitops_maintenanceLogs', JSON.stringify(maintenanceLogs)); }, [maintenanceLogs]);
+  useEffect(() => { localStorage.setItem('transitops_fuelLogs', JSON.stringify(fuelLogs)); }, [fuelLogs]);
+  useEffect(() => { localStorage.setItem('transitops_expenses', JSON.stringify(expenses)); }, [expenses]);
 
   const signIn = (selectedRole) => {
     setUser(seedUser);
@@ -88,8 +102,20 @@ export function AppDataProvider({ children }) {
     }
   };
 
-  const addMaintenanceLog = (log) =>
+  const addMaintenanceLog = (log) => {
     setMaintenanceLogs((prev) => [{ id: nextId("m"), status: "Active", ...log }, ...prev]);
+    updateVehicleStatus(log.vehicleId, "In Shop");
+  };
+
+  const completeMaintenanceLog = (logId) => {
+    setMaintenanceLogs((prev) =>
+      prev.map((l) => (l.id === logId ? { ...l, status: "Completed" } : l))
+    );
+    const log = maintenanceLogs.find((l) => l.id === logId);
+    if (log) {
+      updateVehicleStatus(log.vehicleId, "Available");
+    }
+  };
 
   const addFuelLog = (log) => setFuelLogs((prev) => [{ id: nextId("f"), ...log }, ...prev]);
   const addExpense = (exp) => setExpenses((prev) => [{ id: nextId("e"), ...exp }, ...prev]);
@@ -115,6 +141,7 @@ export function AppDataProvider({ children }) {
       completeTrip,
       cancelTrip,
       addMaintenanceLog,
+      completeMaintenanceLog,
       addFuelLog,
       addExpense,
     }),
