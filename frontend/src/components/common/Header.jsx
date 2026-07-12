@@ -13,12 +13,19 @@ export default function Header() {
   // Notifications state
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef(null);
+  
+  // Help state
+  const [showHelp, setShowHelp] = useState(false);
+  const helpRef = useRef(null);
 
   // Close notifications if clicked outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (notifRef.current && !notifRef.current.contains(event.target)) {
         setShowNotifications(false);
+      }
+      if (helpRef.current && !helpRef.current.contains(event.target)) {
+        setShowHelp(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -189,9 +196,38 @@ export default function Header() {
               )}
             </div>
 
-            <button className="p-2 rounded-full hover:bg-surface-container-high transition-colors">
-              <span className="material-symbols-outlined text-secondary">help</span>
-            </button>
+            {/* Help Button */}
+            <div className="relative" ref={helpRef}>
+              <button 
+                onClick={() => setShowHelp(!showHelp)}
+                className={`p-2 rounded-full hover:bg-surface-container-high transition-colors relative ${showHelp ? 'bg-surface-container-high' : ''}`}
+              >
+                <span className="material-symbols-outlined text-secondary">help</span>
+              </button>
+              
+              {/* Help Dropdown */}
+              {showHelp && (
+                <div className="absolute top-full right-0 mt-2 w-56 bg-white border border-outline-variant rounded-xl shadow-xl z-50 overflow-hidden">
+                  <div className="p-3 border-b border-outline-variant bg-surface-container-lowest">
+                    <h4 className="text-body-md font-bold text-on-surface">Help & Resources</h4>
+                  </div>
+                  <ul className="divide-y divide-outline-variant">
+                    <li className="p-3 hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-3" onClick={() => setShowHelp(false)}>
+                      <span className="material-symbols-outlined text-secondary text-[18px]">menu_book</span>
+                      <span className="text-body-md text-on-surface">Documentation</span>
+                    </li>
+                    <li className="p-3 hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-3" onClick={() => setShowHelp(false)}>
+                      <span className="material-symbols-outlined text-secondary text-[18px]">support_agent</span>
+                      <span className="text-body-md text-on-surface">Contact Support</span>
+                    </li>
+                    <li className="p-3 hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-3" onClick={() => setShowHelp(false)}>
+                      <span className="material-symbols-outlined text-secondary text-[18px]">keyboard</span>
+                      <span className="text-body-md text-on-surface">Shortcuts</span>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-3 pl-4 border-l border-outline-variant">
             <div className="text-right">
