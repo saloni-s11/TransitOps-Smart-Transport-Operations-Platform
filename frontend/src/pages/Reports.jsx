@@ -51,7 +51,7 @@ export default function Reports() {
   // Monthly revenue data based on actual completed trips
   const monthlyRevenue = useMemo(() => {
     const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    const currentYear = new Date().getFullYear();
+    const currentYear = new Date().getUTCFullYear();
     
     // Calculate revenue per month from actual completed trips
     const monthlyData = months.map((month, index) => {
@@ -59,8 +59,9 @@ export default function Reports() {
       const monthTrips = trips.filter(trip => {
         if (trip.status !== 'Completed' || !trip.completedAt) return false;
         const completedDate = new Date(trip.completedAt);
-        return completedDate.getFullYear() === currentYear && 
-               completedDate.getMonth() === index;
+        // Use UTC methods to avoid timezone shifting (dates stored as YYYY-MM-DD)
+        return completedDate.getUTCFullYear() === currentYear && 
+               completedDate.getUTCMonth() === index;
       });
       
       // Calculate revenue based on trip characteristics
@@ -305,7 +306,7 @@ Based on completed trips • ₹15/km base + ₹2/kg cargo + vehicle type premiu
 </div>
 <div className="flex items-end justify-between h-64 gap-1 px-4 overflow-x-auto">
 {monthlyRevenue.map((month, index) => {
-  const isCurrentMonth = index === new Date().getMonth();
+  const isCurrentMonth = index === new Date().getUTCMonth();
   return (
     <div key={month.month} className="flex flex-col items-center flex-shrink-0 min-w-[60px]">
       <div 
